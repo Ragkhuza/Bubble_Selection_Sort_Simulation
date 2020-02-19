@@ -1,6 +1,7 @@
 import javax.swing.*;
 import java.awt.BorderLayout;
 import java.awt.Button;
+import java.awt.Color;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.util.ArrayList;
@@ -21,6 +22,14 @@ public class BubbleSort extends AlgorithmSort {
 
         jframe.addWindowListener(new WindowAdapter(){
             public void windowClosing(WindowEvent e){
+                // @DOGGO maybe I can optimize these
+                // close if list was entered but not animated
+                if (animationThread == null) {
+                    jframe.dispose();
+                    mainFrame.setVisible(true);
+                    return;
+                }
+
                 // @DOGGO this is my last resort
                 // if animation is still on going stop all the system
                 if(animationThread.isAlive()) {
@@ -50,8 +59,11 @@ public class BubbleSort extends AlgorithmSort {
                     printArray(arr, 0);
                     int temp = 0;
                     for(int i=0; i < arr.size(); i++) {
+                        changeColor(boxes[i], Color.CYAN, false);
                         for(int j=1; j < (arr.size()-i); j++) {
                             if(arr.get(j-1) > arr.get(j)) {
+                                changeColor(boxes[j-1], Color.RED, false);
+                                changeColor(boxes[j], Color.GREEN, false);
                                 //swap elements
                                 temp = arr.get(j-1);
                                 arr.set(j-1, arr.get(j));
@@ -60,8 +72,14 @@ public class BubbleSort extends AlgorithmSort {
                                 System.out.println("Swapping" + arr.get(j-1) + " and " + arr.get(j));
 
                                 swap(j-1, j);
+
+                                changeColor(boxes[j-1], Color.WHITE, true);
+                                changeColor(boxes[j], Color.WHITE, true);
+                                if ((j-1) == i)
+                                    changeColor(boxes[j-1], Color.CYAN, true);
                             }
                         }
+                        changeColor(boxes[i], Color.WHITE, false);
                         printArray(arr, i + 1);
                     }
                 }
@@ -73,6 +91,10 @@ public class BubbleSort extends AlgorithmSort {
 
         jframe.setSize(screenWidth, SCREEN_HEIGHT);
         jframe.setLocationRelativeTo(null);
+
+        showGroupBanner(jframe);
+        showLegends(jframe);
+
         jframe.setVisible(true);
     }
 

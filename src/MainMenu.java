@@ -19,7 +19,7 @@ public class MainMenu {
 
     public static void main(String[] args) {
         new MainMenu();
-        playBackgroundMusic();
+//        playBackgroundMusic();
     }
 
     public MainMenu() {
@@ -90,7 +90,7 @@ public class MainMenu {
                 input = JOptionPane.showInputDialog("Please input numbers: (separated by ONE space)");
                 arr = new ArrayList<Integer>();
 
-                String[] inputArr = input.split(" ");
+                String[] inputArr = input.trim().split(" ");
 
                 for (String inp : inputArr)
                     arr.add(Integer.parseInt(inp));

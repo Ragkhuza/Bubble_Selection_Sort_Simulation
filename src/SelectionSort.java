@@ -21,6 +21,14 @@ public class SelectionSort extends AlgorithmSort {
 
         jframe.addWindowListener(new WindowAdapter(){
             public void windowClosing(WindowEvent e){
+                // @DOGGO maybe I can optimize these
+                // close if list was entered but not animated
+                if (animationThread == null) {
+                    jframe.dispose();
+                    mainFrame.setVisible(true);
+                    return;
+                }
+
                 // @DOGGO this is my last resort
                 // if animation is still on going stop all the system
                 if(animationThread.isAlive()) {
@@ -86,6 +94,10 @@ public class SelectionSort extends AlgorithmSort {
 
         jframe.setSize(screenWidth, SCREEN_HEIGHT);
         jframe.setLocationRelativeTo(null);
+
+        showLegends(jframe);
+        showGroupBanner(jframe);
+
         jframe.setVisible(true);
     }
 
