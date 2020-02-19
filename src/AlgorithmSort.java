@@ -1,5 +1,4 @@
 import javax.swing.JFrame;
-import javax.swing.JOptionPane;
 import java.awt.Button;
 import java.awt.Color;
 import java.util.ArrayList;
@@ -20,25 +19,6 @@ public abstract class AlgorithmSort {
 
     protected abstract void swap(int b1, int b2);
 
-    static protected ArrayList<Integer> askForInput() {
-        ArrayList<Integer> arr = new ArrayList<Integer>();
-        String input = "";
-
-        while (input.isEmpty()) {
-            input = JOptionPane.showInputDialog("Please input numbers: (separated by space)");
-            arr = new ArrayList<Integer>();
-            String[] inputArr = input.split(" ");
-
-            for (String inp : inputArr)
-                arr.add(Integer.parseInt(inp));
-
-            System.out.print("Inputs: ");
-            for (Integer i : arr)
-                System.out.print(i + " ");
-        }
-        return arr;
-    }
-
     static protected void changeColor(Button btn, Color c, boolean instant) {
         int speed = changeColorSpeed;
 
@@ -48,7 +28,7 @@ public abstract class AlgorithmSort {
         try {
             TimeUnit.MILLISECONDS.sleep(speed);
         } catch (InterruptedException e) {
-            e.printStackTrace();
+            System.out.println("[changeColor] {ignore!} InterruptedException in AlgorithmSort.java");
         }
 
         btn.setBackground(c);
@@ -63,7 +43,7 @@ public abstract class AlgorithmSort {
                     try {
                         TimeUnit.MILLISECONDS.sleep(speed);
                     } catch (InterruptedException e) {
-                        e.printStackTrace();
+                        System.out.println("[WARNING]User interrupted the animations, Threads will keep going until destroyed.");
                     }
                 }
                 break;
@@ -74,7 +54,7 @@ public abstract class AlgorithmSort {
                     try {
                         TimeUnit.MILLISECONDS.sleep(speed);
                     } catch (InterruptedException e) {
-                        e.printStackTrace();
+                        System.out.println("[WARNING]User interrupted the animations, Threads will keep going until destroyed.");
                     }
                 }
                 break;
@@ -85,7 +65,7 @@ public abstract class AlgorithmSort {
                     try {
                         TimeUnit.MILLISECONDS.sleep(speed);
                     } catch (InterruptedException e) {
-                        e.printStackTrace();
+                        System.out.println("[WARNING]User interrupted the animations, Threads will keep going until destroyed.");
                     }
                 }
                 break;
@@ -96,7 +76,7 @@ public abstract class AlgorithmSort {
                     try {
                         TimeUnit.MILLISECONDS.sleep(speed);
                     } catch (InterruptedException e) {
-                        e.printStackTrace();
+                        System.out.println("[WARNING]User interrupted the animations, Threads will keep going until destroyed.");
                     }
                 }
                 break;

@@ -1,32 +1,41 @@
-import javax.swing.JFrame;
+import javax.swing.*;
+import java.awt.BorderLayout;
 import java.awt.Button;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.util.ArrayList;
-import java.util.concurrent.TimeUnit;
 
 public class BubbleSort extends AlgorithmSort {
-    /*static Button[] boxes;
-    static ArrayList<Integer> arr;
-    static JFrame jframe;
-    final static int ANIMATE_UP = 0;
-    final static int ANIMATE_DOWN = 1;
-    final static int ANIMATE_LEFT = 2;
-    final static int ANIMATE_RIGHT = 3;*/
+    Thread animationThread;
 
-/*    public static void main(String[] args) {
-        BubbleSort bubbleSortSimulation = new BubbleSort();
-    }*/
+    public BubbleSort(final JFrame mainFrame, ArrayList<Integer> arr) {
+        AlgorithmSort.arr = arr;
 
-    public BubbleSort() {
-        arr = askForInput();
-
-        int screenWidth = 1200;
-        int screenHeight = 300;
-        Button[] button = new Button[arr.size()];
+        screenWidth = 100 + (arr.size() * 75);
         jframe = new JFrame("Bubble Sort Simulation");
-        jframe.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        jframe.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
+
+        jframe.setLayout(new BorderLayout());
+        jframe.setContentPane(new JLabel(new ImageIcon(getClass().getResource(MainMenu.BACKGROUND_IMG))));
         jframe.setLayout(null);
+
+        jframe.addWindowListener(new WindowAdapter(){
+            public void windowClosing(WindowEvent e){
+                // @DOGGO this is my last resort
+                // if animation is still on going stop all the system
+                if(animationThread.isAlive()) {
+                    int confirm = JOptionPane.showConfirmDialog(null, "Closing this window while animating will terminate the whole program.", "Message", JOptionPane.OK_CANCEL_OPTION);
+
+                    if (confirm == 0)
+                        System.exit(0);
+                    else
+                        jframe.setVisible(true);
+                } else {
+                    jframe.dispose();
+                    mainFrame.setVisible(true);
+                }
+            }
+        });
 
         // single instance btns to keep track of our boxes
         boxes = new Button[arr.size()];
@@ -34,29 +43,35 @@ public class BubbleSort extends AlgorithmSort {
         drawBoxes();
 
         Button btn_move = new Button("Sort (Bubble Sort)");
-        btn_move.setBounds((screenWidth/2) - 50, (screenHeight - 30) - 80, 120, 50);
+        btn_move.setBounds((screenWidth/2) - 50, (SCREEN_HEIGHT - 30) - 80, 120, 50);
         btn_move.addActionListener(actionEvent -> {
-                printArray(arr, 0);
-                int temp = 0;
-                for(int i=0; i < arr.size(); i++) {
-                    for(int j=1; j < (arr.size()-i); j++) {
-                        if(arr.get(j-1) > arr.get(j)) {
-                            //swap elements
-                            temp = arr.get(j-1);
-                            arr.set(j-1, arr.get(j));
-                            arr.set(j, temp);
+            animationThread = new Thread(new Runnable() {
+                public void run() {
+                    printArray(arr, 0);
+                    int temp = 0;
+                    for(int i=0; i < arr.size(); i++) {
+                        for(int j=1; j < (arr.size()-i); j++) {
+                            if(arr.get(j-1) > arr.get(j)) {
+                                //swap elements
+                                temp = arr.get(j-1);
+                                arr.set(j-1, arr.get(j));
+                                arr.set(j, temp);
 
-                            System.out.println("Swapping" + arr.get(j-1) + " and " + arr.get(j));
+                                System.out.println("Swapping" + arr.get(j-1) + " and " + arr.get(j));
 
-                            swap(j-1, j);
+                                swap(j-1, j);
+                            }
                         }
+                        printArray(arr, i + 1);
                     }
-                    printArray(arr, i + 1);
                 }
+            });
+
+            animationThread.start();
         });
         jframe.add(btn_move);
 
-        jframe.setSize(screenWidth, screenHeight);
+        jframe.setSize(screenWidth, SCREEN_HEIGHT);
         jframe.setLocationRelativeTo(null);
         jframe.setVisible(true);
     }
@@ -79,60 +94,5 @@ public class BubbleSort extends AlgorithmSort {
         boxes[b1].setLabel(boxes[b2].getLabel());
         boxes[b2].setLabel(lbl);
     }
-
-    /*static protected void animate(Button btn, int num, int speed, int direction) {
-        switch (direction){
-            case ANIMATE_UP:
-                for (int i = 0; i < num; i++) {
-                    btn.setLocation(btn.getX(), btn.getY() - 1);
-                    try {
-                        TimeUnit.MILLISECONDS.sleep(speed);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                }
-                break;
-            case ANIMATE_DOWN:
-                for (int i = 0; i < num; i++) {
-                    btn.setLocation(btn.getX(), btn.getY() + 1);
-                    try {
-                        TimeUnit.MILLISECONDS.sleep(speed);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                }
-                break;
-            case ANIMATE_LEFT:
-                for (int i = 0; i < num; i++) {
-                    btn.setLocation(btn.getX() - 1, btn.getY());
-                    try {
-                        TimeUnit.MILLISECONDS.sleep(speed);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                }
-                break;
-            case ANIMATE_RIGHT:
-                for (int i = 0; i < num; i++) {
-                    btn.setLocation(btn.getX() + 1, btn.getY());
-                    try {
-                        TimeUnit.MILLISECONDS.sleep(speed);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                }
-                break;
-            default:
-                System.out.print("ERROR IN ANIMATE FUNCTION");
-        }
-    }*/
-
-    /*protected void drawBoxes() {
-        for (int i = 0; i < arr.size(); i++) {
-            boxes[i] = new Button(arr.get(i) + "");
-            boxes[i].setBounds(i * 70, 80, 50, 50);
-            jframe.add(boxes[i]);
-        }
-    }*/
 
 }
