@@ -48,7 +48,7 @@ public class SelectionSort extends AlgorithmSort {
         // single instance buttons to keep track of our boxes
         boxes = new Button[arr.size()];
 
-        drawBoxes();
+        createBoxes();
 
         Button btnMove = new Button("Sort (Selection Sort)");
         btnMove.setBounds((screenWidth /2) - 50, (SCREEN_HEIGHT - 30) - 80, 120, 50);

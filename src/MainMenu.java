@@ -19,7 +19,7 @@ public class MainMenu {
 
     public static void main(String[] args) {
         new MainMenu();
-//        playBackgroundMusic();
+        playBackgroundMusic();
     }
 
     public MainMenu() {

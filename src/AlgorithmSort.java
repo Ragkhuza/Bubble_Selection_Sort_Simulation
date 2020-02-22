@@ -8,6 +8,7 @@ import java.util.concurrent.TimeUnit;
 public abstract class AlgorithmSort {
     static Button[] boxes;
     static ArrayList<Integer> arr;
+    static ArrayList<Integer> oldArr;
     static JFrame jframe;
     final static int ANIMATE_UP = 0;
     final static int ANIMATE_DOWN = 1;
@@ -87,12 +88,19 @@ public abstract class AlgorithmSort {
         }
     }
 
-    protected void drawBoxes() {
+    protected void createBoxes() {
         System.out.println("Drawing " + arr.size() + " boxes");
         for (int i = 0; i < arr.size(); i++) {
             boxes[i] = new Button(arr.get(i) + "");
             boxes[i].setBounds((i * 70) + (screenWidth / arr.size()), 80, 50, 50);
             jframe.add(boxes[i]);
+        }
+    }
+
+    protected void removeBoxes() {
+        System.out.println("Removing " + arr.size() + " boxes");
+        for (int i = 0; i < arr.size(); i++) {
+            jframe.remove(boxes[i]);
         }
     }
 
@@ -103,19 +111,18 @@ public abstract class AlgorithmSort {
     }
 
     static void showGroupBanner(final JFrame algoFrame) {
-        String[] members = {"Carlo Alejo", "Nielsen Bernardo", "Calinog Something", "Rasheed Sto. Tomas", "Chris James Delos Reyes"};
+        String[] members = {"Carlo Alejo", "Nielsen Bernardo", "Maika Calinog", "Rasheed Sto. Tomas", "Chris James Delos Reyes"};
         JLabel[] membersJLabel = new JLabel[members.length];
 
         int memberTotalWidth = 0;
         for (int i = 0; i < members.length; i++) {
-            int memberNameWidth = (i + 1) * (members[i].length() * 7);
+            int memberNameWidth = (i + 1) * (members[i].length() * 10);
             membersJLabel[i] = new JLabel(members[i]);
-            membersJLabel[i].setBounds(screenWidth + memberNameWidth, 140, memberNameWidth,40);
+            membersJLabel[i].setBounds(screenWidth + (150 * i) , 140, memberNameWidth,40);
             algoFrame.add(membersJLabel[i]);
 
             memberTotalWidth += (screenWidth) + memberNameWidth;
         }
-
 
         for (int i = 0; i < members.length; i++) {
             final int finalI = i;
@@ -143,8 +150,8 @@ public abstract class AlgorithmSort {
     }
 
     void showLegends(final JFrame algoFrame) {
-        String legends[] = {"legend 1", "legend 2", "legend 3"};
-        JLabel legendsJLabels[] = new JLabel[legends.length];
+        String[] legends = {"legend 1", "legend 2", "legend 3"};
+        JLabel[] legendsJLabels = new JLabel[legends.length];
 
         for (int i = 0; i < legends.length; i++) {
             legendsJLabels[i] = new JLabel(legends[i]);
