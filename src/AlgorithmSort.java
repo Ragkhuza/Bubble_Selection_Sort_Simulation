@@ -21,6 +21,7 @@ public abstract class AlgorithmSort {
     final static int SCREEN_HEIGHT = 300;
     static int animateSpeed = 5;
     static int changeColorSpeed = 300;
+    static int lastArr;
 
     public abstract Button createSortingButton();
 
@@ -29,6 +30,7 @@ public abstract class AlgorithmSort {
     public AlgorithmSort() {
         oldInputArr = (ArrayList<Integer>) AlgorithmSort.inputArr.clone();
         initializePass(0, oldInputArr.size());
+        lastArr = inputArr.size();
     }
 
     public int getCurrentPass() {
@@ -37,6 +39,14 @@ public abstract class AlgorithmSort {
 
     public int getMaxPass() {
         return maxPass;
+    }
+
+    public void setCurrentPass(int p) {
+        currentPass = p;
+    }
+
+    public void setMaxPass(int p) {
+        maxPass = p;
     }
 
     public void initializePass(int cp, int mp) {

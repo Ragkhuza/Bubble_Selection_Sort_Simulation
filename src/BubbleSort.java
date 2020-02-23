@@ -2,13 +2,12 @@ import javax.swing.*;
 import java.awt.BorderLayout;
 import java.awt.Button;
 import java.awt.Color;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.util.ArrayList;
 
 public class BubbleSort extends AlgorithmSort {
+    Button btnStartBubbleSort;
+    Button nextPassButton;
     Thread animationThread;
     String BTN_LABEL = "Sort (Bubble Sort)";
 
@@ -69,42 +68,17 @@ public class BubbleSort extends AlgorithmSort {
     }
 
     public Button createSortingButton() {
-        Button btnStartBubbleSort = new Button(BTN_LABEL);
+        btnStartBubbleSort = new Button(BTN_LABEL);
         btnStartBubbleSort.setBounds((screenWidth/2) - BTN_LABEL.length() * 4, (SCREEN_HEIGHT - 30) - 80, 120, 50);
         btnStartBubbleSort.addActionListener(actionEvent -> {
             if (btnStartBubbleSort.getLabel().equals(BTN_LABEL)) {
                 btnStartBubbleSort.setEnabled(false);
+                nextPassButton.setEnabled(false);
                 animationThread = new Thread(() -> {
-                    printArray(inputArr, 0);
-                    int lastArr = inputArr.size();
-                    int temp = 0;
-                    for (int i = 0; i < maxPass; i++) {
-                        for (int j = 1; j < (inputArr.size() - i); j++) {
-                            changeColor(boxes[j - 1], Color.RED, false);
-                            changeColor(boxes[j], Color.RED, false);
-                            if (inputArr.get(j - 1) > inputArr.get(j)) {
-                                changeColor(boxes[j - 1], Color.GREEN, false);
-                                changeColor(boxes[j], Color.GREEN, true);
-                                //swap elements
-                                temp = inputArr.get(j - 1);
-                                inputArr.set(j - 1, inputArr.get(j));
-                                inputArr.set(j, temp);
-
-                                System.out.println("Swapping" + inputArr.get(j - 1) + " and " + inputArr.get(j));
-
-                                swap(j - 1, j, "bubble_sort");
-                            }
-                            changeColor(boxes[j - 1], Color.WHITE, true);
-                            changeColor(boxes[j], Color.WHITE, true);
-                        }
-                        changeColor(boxes[--lastArr], Color.CYAN, false);
-                        printArray(inputArr, i + 1);
-                    }
-
-                    btnStartBubbleSort.setLabel("Reset");
-                    btnStartBubbleSort.setEnabled(true);
+                    doBubbleSort();
                 });
                 animationThread.start();
+
             } else if (btnStartBubbleSort.getLabel().equals("Reset")) {
                 resetBoxes();
                 btnStartBubbleSort.setLabel(BTN_LABEL);
@@ -114,10 +88,58 @@ public class BubbleSort extends AlgorithmSort {
         return btnStartBubbleSort;
     }
 
+    private int doBubbleSort() {
+//        animationThread = new Thread(() -> {
+        if (lastArr > 0) {
+            printArray(inputArr, 0);
+            int temp = 0;
+            for (; getCurrentPass() < getMaxPass(); setCurrentPass(getCurrentPass() + 1)) {
+                for (int j = 1; j < (inputArr.size() - getCurrentPass()); j++) {
+                    System.out.println("currentPass: " + getCurrentPass());
+                    System.out.println("maxPass: " + getMaxPass());
+                    changeColor(boxes[j - 1], Color.RED, false);
+                    changeColor(boxes[j], Color.RED, false);
+                    if (inputArr.get(j - 1) > inputArr.get(j)) {
+                        changeColor(boxes[j - 1], Color.GREEN, false);
+                        changeColor(boxes[j], Color.GREEN, true);
+                        //swap elements
+                        temp = inputArr.get(j - 1);
+                        inputArr.set(j - 1, inputArr.get(j));
+                        inputArr.set(j, temp);
+
+                        System.out.println("Swapping" + inputArr.get(j - 1) + " and " + inputArr.get(j));
+
+                        swap(j - 1, j, "bubble_sort");
+                    }
+                    changeColor(boxes[j - 1], Color.WHITE, true);
+                    changeColor(boxes[j], Color.WHITE, true);
+                }
+                changeColor(boxes[--lastArr], Color.CYAN, false);
+                printArray(inputArr, getCurrentPass() + 1);
+
+                if(getCurrentPass() == getMaxPass())
+                    return 0;
+            }
+
+            btnStartBubbleSort.setLabel("Reset");
+            btnStartBubbleSort.setEnabled(true);
+            nextPassButton.setEnabled(true);
+//        });
+//        animationThread.start();
+        }
+        return getCurrentPass();
+    }
+
     public Button createNextPassButton() {
-        Button nextPassButton = new Button("Next Pass");
+        nextPassButton = new Button("Next Pass");
         nextPassButton.setBounds((screenWidth/2) + 70, (SCREEN_HEIGHT - 30) - 80, 70, 50);
         nextPassButton.addActionListener(e -> {
+            new Thread(() -> {
+                setMaxPass(getCurrentPass() + 1);
+
+                // execute after thread have finished
+                setCurrentPass(doBubbleSort());
+            }).start();
 
         });
         return nextPassButton;
