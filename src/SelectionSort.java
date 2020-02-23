@@ -61,7 +61,7 @@ public class SelectionSort extends AlgorithmSort {
         jframe.setSize(screenWidth, SCREEN_HEIGHT);
         jframe.setLocationRelativeTo(null);
 
-        showLegends(jframe);
+        showLegends(jframe, true);
         showGroupBanner(jframe);
 
         jframe.setVisible(true);
@@ -69,45 +69,48 @@ public class SelectionSort extends AlgorithmSort {
 
     private int doSelectionSort() {
         if (getMaxPass() <= inputArr.size()) {
+            updateLegends(0, 0, 0); // reset all legends to zero
+            updateLegend(2, "compare: ", true); // update the 3rd legend for selection sort
             System.out.println("currentPass: " + getCurrentPass());
             System.out.println("maxPass: " + getMaxPass());
-            /*animationThread = new Thread(() -> {*/
-                for (int i = getCurrentPass(); i < getMaxPass() - 1; i++) {
-                    changeColor(boxes[i], Color.CYAN, false);
-                    printArray(inputArr, i);
-                    // Find the minimum element in unsorted array
-                    int min_idx = i;
-                    for (int j = i + 1; j < inputArr.size(); j++) {
-                        System.out.println("currentPass: " + getCurrentPass());
-                        System.out.println("maxPass: " + getMaxPass());
-                        changeColor(boxes[j], Color.RED, false);
-                        changeColor(boxes[j], Color.WHITE, false);
-                        if (inputArr.get(j) <= inputArr.get(min_idx)) {
+            for (int i = getCurrentPass(); i <= getMaxPass() - 1; i++) {
+                changeColor(boxes[i], Color.CYAN, false);
+                printArray(inputArr, i);
+                // Find the minimum element in unsorted array
+                int min_idx = i;
+                for (int j = i + 1; j < inputArr.size(); j++) {
+                    updateLegend(1, j+"",false); // update current
+                    updateLegend(2, "compare: "+i, true); // update compare
 
-                            // change the color of previous minimum box to green
-                            if (j > 0)
-                                if (boxes[min_idx].getBackground() == Color.GREEN)
-                                    changeColor(boxes[min_idx], Color.WHITE, true);
+                    System.out.println("currentPass: " + getCurrentPass());
+                    System.out.println("maxPass: " + getMaxPass());
+                    changeColor(boxes[j], Color.RED, false);
+                    changeColor(boxes[j], Color.WHITE, false);
+                    if (inputArr.get(j) <= inputArr.get(min_idx)) {
 
-                            min_idx = j;
-                            changeColor(boxes[min_idx], Color.GREEN, false);
-                        }
+                        // change the color of previous minimum box to green
+                        if (j > 0)
+                            if (boxes[min_idx].getBackground() == Color.GREEN)
+                                changeColor(boxes[min_idx], Color.WHITE, true);
+
+                        min_idx = j;
+                        changeColor(boxes[min_idx], Color.GREEN, false);
                     }
-
-                    // Swap the found minimum element with the first element
-                    int temp = inputArr.get(min_idx);
-                    inputArr.set(min_idx, inputArr.get(i));
-                    inputArr.set(i, temp);
-
-                    if (!(i >= inputArr.size()))
-                        swap(i, min_idx,"selection_sort");
-
-                    changeColor(boxes[i], Color.WHITE, false);
                 }
 
-//                btnStartSelectionSort.setLabel("Reset");
-            /*});
-            animationThread.start();*/
+                // Swap the found minimum element with the first element
+                int temp = inputArr.get(min_idx);
+                inputArr.set(min_idx, inputArr.get(i));
+                inputArr.set(i, temp);
+
+                if (!(i >= inputArr.size()))
+                    swap(i, min_idx,"selection_sort");
+
+                updateLegend(0, (i+1) + "", false); // update pass
+                updateLegend(2, "compare: "+i, true); // update compare
+                changeColor(boxes[i], Color.CYAN, false);
+            }
+
         }
         enableButtons();
         return getCurrentPass();
@@ -127,22 +130,13 @@ public class SelectionSort extends AlgorithmSort {
         btnStartSelectionSort = new Button(BTN_LABEL);
         btnStartSelectionSort.setBounds( (((screenWidth/2) + 30) - BTN_LABEL.length() * 3) - BTN_RELATIVE_VAL, (SCREEN_HEIGHT - 30) - 80, 100, 50);
         btnStartSelectionSort.addActionListener(actionEvent -> {
-//            if (btnStartSelectionSort.getLabel().equals(BTN_LABEL)) {
+            setMaxPass(inputArr.size());
+            disableButtons();
 
-                disableButtons();
-
-                animationThread = new Thread(() -> {
-                    doSelectionSort();
-                });
-
-                animationThread.start();
-
-                // IF RESET HAS BEEN CLICKED
-            /*} else if (btnStartSelectionSort.getLabel().equals("Reset")) {
-                resetPassValues();
-                resetBoxes();
-                btnStartSelectionSort.setLabel(BTN_LABEL);
-            }*/
+            animationThread = new Thread(() -> {
+                doSelectionSort();
+            });
+            animationThread.start();
 
         });
 

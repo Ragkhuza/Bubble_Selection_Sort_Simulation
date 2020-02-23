@@ -9,6 +9,7 @@ import java.util.concurrent.TimeUnit;
 public abstract class AlgorithmSort {
     static int currentPass, maxPass;
 
+    JLabel[] legendsJLabels;
     static Button[] boxes;
     static ArrayList<Integer> inputArr;
     ArrayList<Integer> oldInputArr;
@@ -201,22 +202,66 @@ public abstract class AlgorithmSort {
         }
     }
 
-    void showLegends(final JFrame algoFrame) {
-        String[] legends = {"legend 1", "legend 2", "legend 3"};
-        JLabel[] legendsJLabels = new JLabel[legends.length];
+    void updateLegend(int i, String str, boolean wholeWord) {
+        if (!wholeWord)
+            switch (i) {
+                case 0:
+                    legendsJLabels[0].setText("pass: " + str);
+                    break;
+                case 1:
+                    legendsJLabels[1].setText("current i: " + str);
+                    break;
+                case 2:
+                    legendsJLabels[2].setText("limit: " + str);
+                    break;
+                default:
+                    System.out.println("ERROR in update Legend: value = " + i);
+            }
+        else {
+            switch (i) {
+                case 0:
+                    legendsJLabels[0].setText(str);
+                    break;
+                case 1:
+                    legendsJLabels[1].setText(str);
+                    break;
+                case 2:
+                    legendsJLabels[2].setText(str);
+                    break;
+                default:
+                    System.out.println("ERROR in update Legend: value = " + i);
+            }
+        }
+
+    }
+
+    void updateLegends(int l1, int l2, int l3) {
+        legendsJLabels[0].setText("pass: " + l1+"");
+        legendsJLabels[1].setText("current i: " + l2+"");
+        legendsJLabels[2].setText("limit: " + l3+"");
+    }
+
+    void showLegends(final JFrame algoFrame, boolean isSelectionSort) {
+        String[] legends = {"pass: ", "current i: ", "limit: ", "LOWEST"};
+        legendsJLabels = new JLabel[legends.length];
 
         for (int i = 0; i < legends.length; i++) {
+            if (!isSelectionSort && i == (legends.length - 1))
+                legends[3] = "SWAPPING";
             legendsJLabels[i] = new JLabel(legends[i]);
-            legendsJLabels[i].setBounds(20, 180 + (i * 20), legends[i].length() * 10,20);
+            legendsJLabels[i].setBounds(20, 160 + (i * 20), legends[i].length() * 10,20);
 
             switch (i) {
                 case 0:
-                    legendsJLabels[i].setForeground(Color.CYAN);
+                    legendsJLabels[i].setForeground(Color.YELLOW);
                     break;
                 case 1:
                     legendsJLabels[i].setForeground(Color.RED);
                     break;
                 case 2:
+                    legendsJLabels[i].setForeground(Color.CYAN);
+                    break;
+                case 3:
                     legendsJLabels[i].setForeground(Color.GREEN);
                     break;
                 default:

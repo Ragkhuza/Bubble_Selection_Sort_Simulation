@@ -64,18 +64,19 @@ public class BubbleSort extends AlgorithmSort {
         jframe.setLocationRelativeTo(null);
 
         showGroupBanner(jframe);
-        showLegends(jframe);
+        showLegends(jframe, false);
 
         jframe.setVisible(true);
     }
 
     private int doBubbleSort() {
-//        animationThread = new Thread(() -> {
         if (lastArr > 0) {
             printArray(inputArr, 0);
             int temp = 0;
             for (; getCurrentPass() < getMaxPass(); setCurrentPass(getCurrentPass() + 1)) {
                 for (int j = 1; j < (inputArr.size() - getCurrentPass()); j++) {
+                    updateLegends(getCurrentPass(), j - 1, lastArr - 1); // update all legends
+
                     System.out.println("currentPass: " + getCurrentPass());
                     System.out.println("maxPass: " + getMaxPass());
                     changeColor(boxes[j - 1], Color.RED, false);
@@ -95,6 +96,9 @@ public class BubbleSort extends AlgorithmSort {
                     changeColor(boxes[j - 1], Color.WHITE, true);
                     changeColor(boxes[j], Color.WHITE, true);
                 }
+
+                updateLegend(2, (lastArr - 1) + "", false); // update all legends
+
                 changeColor(boxes[--lastArr], Color.CYAN, false);
                 printArray(inputArr, getCurrentPass() + 1);
 
@@ -102,10 +106,6 @@ public class BubbleSort extends AlgorithmSort {
                     return 0;
             }
 
-//            btnStartBubbleSort.setLabel("Reset");
-//            enableButtons();
-//        });
-//        animationThread.start();
         }
         enableButtons();
         return getCurrentPass();
@@ -125,19 +125,12 @@ public class BubbleSort extends AlgorithmSort {
         btnStartBubbleSort = new Button(BTN_LABEL);
         btnStartBubbleSort.setBounds( ( ((screenWidth/2) + 30) - BTN_LABEL.length() * 4 ) - BTN_RELATIVE_VAL, (SCREEN_HEIGHT - 30) - 80, 80, 50);
         btnStartBubbleSort.addActionListener(actionEvent -> {
-            /*if (btnStartBubbleSort.getLabel().equals(BTN_LABEL)) {*/
-                disableButtons();
-                animationThread = new Thread(() -> {
-                    doBubbleSort();
-                });
-                animationThread.start();
-
-                // IF RESET HAS BEEN CLICKED
-            /*} else if (btnStartBubbleSort.getLabel().equals("Reset")) {
-                resetPassValues();
-                resetBoxes();
-                btnStartBubbleSort.setLabel(BTN_LABEL);
-            }*/
+            setMaxPass(inputArr.size());
+            disableButtons();
+            animationThread = new Thread(() -> {
+                doBubbleSort();
+            });
+            animationThread.start();
         });
 
         return btnStartBubbleSort;
@@ -148,6 +141,7 @@ public class BubbleSort extends AlgorithmSort {
         nextPassButton.setBounds( ((screenWidth/2) + 70) - BTN_RELATIVE_VAL, (SCREEN_HEIGHT - 30) - 80, 70, 50);
         nextPassButton.addActionListener(e -> {
             new Thread(() -> {
+                disableButtons();
                 System.out.println("clicking next pass");
                 setMaxPass(getCurrentPass() + 1);
                 // execute after thread have finished
