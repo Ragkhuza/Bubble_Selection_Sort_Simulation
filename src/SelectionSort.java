@@ -4,14 +4,15 @@ import java.awt.Button;
 import java.awt.Color;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.util.ArrayList;
 
 public class SelectionSort extends AlgorithmSort {
     static Thread animationThread;
-    public SelectionSort(final JFrame mainFrame, ArrayList<Integer> arr) {
-        AlgorithmSort.arr = arr;
+    final static String BTN_LABEL = "Sort (Selection Sort)";
 
-        screenWidth = 100 + (arr.size() * 75);
+    public SelectionSort(final JFrame mainFrame) {
+        super();
+
+        screenWidth = 225 + (inputArr.size() * 75);
         jframe = new JFrame("Selection Sort Simulation");
         jframe.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
 
@@ -46,51 +47,11 @@ public class SelectionSort extends AlgorithmSort {
         });
 
         // single instance buttons to keep track of our boxes
-        boxes = new Button[arr.size()];
+        boxes = new Button[inputArr.size()];
 
         createBoxes();
 
-        Button btnMove = new Button("Sort (Selection Sort)");
-        btnMove.setBounds((screenWidth /2) - 50, (SCREEN_HEIGHT - 30) - 80, 120, 50);
-        btnMove.addActionListener(actionEvent -> {
-            animationThread = new Thread(new Runnable() {
-                public void run() {
-                    for (int i = 0; i < arr.size()-1; i++) {
-                        changeColor(boxes[i], Color.CYAN, false);
-                        printArray(arr, i);
-                        // Find the minimum element in unsorted array
-                        int min_idx = i;
-                        for (int j = i+1; j < arr.size(); j++) {
-                            changeColor(boxes[j], Color.RED, false);
-                            changeColor(boxes[j], Color.WHITE, false);
-                            if (arr.get(j) <= arr.get(min_idx)) {
-
-                                // change the color of previous minimum box to green
-                                if (j > 0)
-                                    if(boxes[min_idx].getBackground() == Color.GREEN)
-                                        changeColor(boxes[min_idx], Color.WHITE, true);
-
-                                min_idx = j;
-                                changeColor(boxes[min_idx], Color.GREEN, false);
-                            }
-                        }
-
-                        // Swap the found minimum element with the first element
-                        int temp = arr.get(min_idx);
-                        arr.set(min_idx, arr.get(i));
-                        arr.set(i, temp);
-
-                        if (!(i >= arr.size()))
-                            swap(i, min_idx);
-
-                        changeColor(boxes[i], Color.WHITE, false);
-                    }
-                }
-            });
-            animationThread.start();
-
-        });
-        jframe.add(btnMove);
+        jframe.add(createSortingButton());
 
         jframe.setSize(screenWidth, SCREEN_HEIGHT);
         jframe.setLocationRelativeTo(null);
@@ -101,34 +62,61 @@ public class SelectionSort extends AlgorithmSort {
         jframe.setVisible(true);
     }
 
-    protected void swap(int b1, int b2) {
-        System.out.println("SWAPPING b1 : b2 || " + b1 + " : " + b2);
-        System.out.println("Arr1 : boxes1 || " + arr.get(b1) + " : " + boxes[b1].getLabel());
-        System.out.println("Arr2 : boxes2 || " + arr.get(b2) + " : " + boxes[b2].getLabel());
+    public Button createSortingButton() {
+        Button btnStartSelectionSort = new Button(BTN_LABEL);
+        btnStartSelectionSort.setBounds((screenWidth /2) - BTN_LABEL.length() * 3, (SCREEN_HEIGHT - 30) - 80, 120, 50);
+        btnStartSelectionSort.addActionListener(actionEvent -> {
+            if (btnStartSelectionSort.getLabel().equals(BTN_LABEL)) {
 
-        animate(boxes[b1], 50, animateSpeed, ANIMATE_UP);
-        animate(boxes[b2], 50, animateSpeed, ANIMATE_UP);
+                btnStartSelectionSort.setEnabled(false);
+                animationThread = new Thread(() -> {
+                    for (int i = 0; i < inputArr.size() - 1; i++) {
+                        changeColor(boxes[i], Color.CYAN, false);
+                        printArray(inputArr, i);
+                        // Find the minimum element in unsorted array
+                        int min_idx = i;
+                        for (int j = i + 1; j < inputArr.size(); j++) {
+                            changeColor(boxes[j], Color.RED, false);
+                            changeColor(boxes[j], Color.WHITE, false);
+                            if (inputArr.get(j) <= inputArr.get(min_idx)) {
 
-        System.out.println("Moving b1 from " + boxes[b1].getX() + " to right:  " + boxes[b2].getX());
-        int tempXX = boxes[b2].getX() - boxes[b1].getX();
-        animate(boxes[b1], boxes[b2].getX() - boxes[b1].getX(), animateSpeed, ANIMATE_RIGHT);
-        System.out.println("Moving b2 from " + boxes[b2].getX() + " to left:  " + tempXX);
-        animate(boxes[b2], tempXX, animateSpeed, ANIMATE_LEFT);
+                                // change the color of previous minimum box to green
+                                if (j > 0)
+                                    if (boxes[min_idx].getBackground() == Color.GREEN)
+                                        changeColor(boxes[min_idx], Color.WHITE, true);
 
-        animate(boxes[b1], 50, animateSpeed, ANIMATE_DOWN);
-        animate(boxes[b2], 50, animateSpeed, ANIMATE_DOWN);
+                                min_idx = j;
+                                changeColor(boxes[min_idx], Color.GREEN, false);
+                            }
+                        }
 
-        int tempX = boxes[b1].getX();
-        int tempY = boxes[b1].getY();
-        boxes[b1].setLocation(boxes[b2].getX(), boxes[b2].getY());
-        boxes[b2].setLocation(tempX, tempY);
+                        // Swap the found minimum element with the first element
+                        int temp = inputArr.get(min_idx);
+                        inputArr.set(min_idx, inputArr.get(i));
+                        inputArr.set(i, temp);
 
-        String lbl = boxes[b1].getLabel();
-        boxes[b1].setLabel(boxes[b2].getLabel());
-        boxes[b2].setLabel(lbl);
+                        if (!(i >= inputArr.size()))
+                            swap(i, min_idx,"selection_sort");
 
-        changeColor(boxes[b1], Color.WHITE, true);
-        changeColor(boxes[b2], Color.WHITE, true);
+                        changeColor(boxes[i], Color.WHITE, false);
+                    }
+
+                    btnStartSelectionSort.setLabel("Reset");
+                    btnStartSelectionSort.setEnabled(true);
+                });
+                animationThread.start();
+            } else if (btnStartSelectionSort.getLabel().equals("Reset")) {
+                resetBoxes();
+                btnStartSelectionSort.setLabel(BTN_LABEL);
+            }
+
+        });
+
+        return btnStartSelectionSort;
+    }
+
+    public Button createNextPassButton() {
+        return new Button();
     }
 
 }

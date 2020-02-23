@@ -2,6 +2,8 @@ import javax.swing.*;
 import java.awt.BorderLayout;
 import java.awt.Button;
 import java.awt.Color;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.util.ArrayList;
@@ -10,11 +12,12 @@ public class BubbleSort extends AlgorithmSort {
     Thread animationThread;
     String BTN_LABEL = "Sort (Bubble Sort)";
 
-    public BubbleSort(final JFrame mainFrame, ArrayList<Integer> arr) {
-        AlgorithmSort.arr = arr;
-        AlgorithmSort.oldArr = arr;
+    public BubbleSort(final JFrame mainFrame) {
+        super();
 
-        screenWidth = 100 + (arr.size() * 75);
+        System.out.println("oldArr in construct" + oldInputArr);
+
+        screenWidth = 225 + (inputArr.size() * 75);
         jframe = new JFrame("Bubble Sort Simulation");
         jframe.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
 
@@ -49,52 +52,12 @@ public class BubbleSort extends AlgorithmSort {
         });
 
         // single instance btns to keep track of our boxes
-        boxes = new Button[arr.size()];
+        boxes = new Button[inputArr.size()];
 
         createBoxes();
 
-        Button btn_move = new Button(BTN_LABEL);
-        btn_move.setBounds((screenWidth/2) - 50, (SCREEN_HEIGHT - 30) - 80, 120, 50);
-        btn_move.addActionListener(actionEvent -> {
-            if (btn_move.getLabel().equals(BTN_LABEL)) {
-                animationThread = new Thread(new Runnable() {
-                    public void run() {
-                        printArray(arr, 0);
-                        int lastArr = arr.size();
-                        int temp = 0;
-                        for (int i = 0; i < arr.size(); i++) {
-                            for (int j = 1; j < (arr.size() - i); j++) {
-                                changeColor(boxes[j - 1], Color.RED, false);
-                                changeColor(boxes[j], Color.RED, false);
-                                if (arr.get(j - 1) > arr.get(j)) {
-                                    changeColor(boxes[j - 1], Color.GREEN, false);
-                                    changeColor(boxes[j], Color.GREEN, true);
-                                    //swap elements
-                                    temp = arr.get(j - 1);
-                                    arr.set(j - 1, arr.get(j));
-                                    arr.set(j, temp);
-
-                                    System.out.println("Swapping" + arr.get(j - 1) + " and " + arr.get(j));
-
-                                    swap(j - 1, j);
-                                }
-                                changeColor(boxes[j - 1], Color.WHITE, true);
-                                changeColor(boxes[j], Color.WHITE, true);
-                            }
-                            changeColor(boxes[--lastArr], Color.CYAN, false);
-                            printArray(arr, i + 1);
-                        }
-
-                        btn_move.setLabel("Reset");
-                    }
-                });
-                animationThread.start();
-            } else if (btn_move.getLabel().equals("Reset")) {
-                resetBoxes();
-                btn_move.setLabel(BTN_LABEL);
-            }
-        });
-        jframe.add(btn_move);
+        jframe.add(createSortingButton());
+        jframe.add(createNextPassButton());
 
         jframe.setSize(screenWidth, SCREEN_HEIGHT);
         jframe.setLocationRelativeTo(null);
@@ -105,32 +68,59 @@ public class BubbleSort extends AlgorithmSort {
         jframe.setVisible(true);
     }
 
-    protected void swap(int b1, int b2) {
-        animate(boxes[b1], 50, 1, ANIMATE_UP);
-        animate(boxes[b2], 50, 1, ANIMATE_UP);
+    public Button createSortingButton() {
+        Button btnStartBubbleSort = new Button(BTN_LABEL);
+        btnStartBubbleSort.setBounds((screenWidth/2) - BTN_LABEL.length() * 4, (SCREEN_HEIGHT - 30) - 80, 120, 50);
+        btnStartBubbleSort.addActionListener(actionEvent -> {
+            if (btnStartBubbleSort.getLabel().equals(BTN_LABEL)) {
+                btnStartBubbleSort.setEnabled(false);
+                animationThread = new Thread(() -> {
+                    printArray(inputArr, 0);
+                    int lastArr = inputArr.size();
+                    int temp = 0;
+                    for (int i = 0; i < maxPass; i++) {
+                        for (int j = 1; j < (inputArr.size() - i); j++) {
+                            changeColor(boxes[j - 1], Color.RED, false);
+                            changeColor(boxes[j], Color.RED, false);
+                            if (inputArr.get(j - 1) > inputArr.get(j)) {
+                                changeColor(boxes[j - 1], Color.GREEN, false);
+                                changeColor(boxes[j], Color.GREEN, true);
+                                //swap elements
+                                temp = inputArr.get(j - 1);
+                                inputArr.set(j - 1, inputArr.get(j));
+                                inputArr.set(j, temp);
 
-        animate(boxes[b1], 70, 1, ANIMATE_RIGHT);
-        animate(boxes[b2], 70, 1, ANIMATE_LEFT);
+                                System.out.println("Swapping" + inputArr.get(j - 1) + " and " + inputArr.get(j));
 
-        animate(boxes[b1], 50, 1, ANIMATE_DOWN);
-        animate(boxes[b2], 50, 1, ANIMATE_DOWN);
+                                swap(j - 1, j, "bubble_sort");
+                            }
+                            changeColor(boxes[j - 1], Color.WHITE, true);
+                            changeColor(boxes[j], Color.WHITE, true);
+                        }
+                        changeColor(boxes[--lastArr], Color.CYAN, false);
+                        printArray(inputArr, i + 1);
+                    }
 
-        int tempX = boxes[b1].getX();
-        boxes[b1].setLocation(boxes[b2].getX(), boxes[b2].getY());
-        boxes[b2].setLocation(tempX, boxes[b2].getY());
+                    btnStartBubbleSort.setLabel("Reset");
+                    btnStartBubbleSort.setEnabled(true);
+                });
+                animationThread.start();
+            } else if (btnStartBubbleSort.getLabel().equals("Reset")) {
+                resetBoxes();
+                btnStartBubbleSort.setLabel(BTN_LABEL);
+            }
+        });
 
-        String lbl = boxes[b1].getLabel();
-        boxes[b1].setLabel(boxes[b2].getLabel());
-        boxes[b2].setLabel(lbl);
+        return btnStartBubbleSort;
     }
 
-    public void resetBoxes() {
-        arr = oldArr;
+    public Button createNextPassButton() {
+        Button nextPassButton = new Button("Next Pass");
+        nextPassButton.setBounds((screenWidth/2) + 70, (SCREEN_HEIGHT - 30) - 80, 70, 50);
+        nextPassButton.addActionListener(e -> {
 
-        printArray(arr, -1);
-        printArray(oldArr, -2);
-        removeBoxes();
-        createBoxes();
+        });
+        return nextPassButton;
     }
 
 }

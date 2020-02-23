@@ -4,6 +4,8 @@ import javax.sound.sampled.Clip;
 import javax.sound.sampled.FloatControl;
 import javax.swing.*;
 import java.awt.BorderLayout;
+import java.io.BufferedInputStream;
+import java.io.InputStream;
 import java.util.ArrayList;
 
 public class MainMenu {
@@ -82,12 +84,12 @@ public class MainMenu {
         jframe.setVisible(true);
     }
 
-    // get input from user
+    // get input from user & verify if correct
     static protected ArrayList<Integer> askForInput() {
         ArrayList<Integer> arr = new ArrayList<Integer>();
         String input = "";
 
-                input = JOptionPane.showInputDialog("Please input numbers: (separated by ONE space)");
+                input = JOptionPane.showInputDialog("Please input at least 2 numbers: (separated by ONE space)");
                 arr = new ArrayList<Integer>();
 
                 String[] inputArr = input.trim().split(" ");
@@ -106,11 +108,11 @@ public class MainMenu {
     // The main driver for each sorting algorithm
     private void startSorting(int sortType) {
         boolean pass = false;
-        ArrayList<Integer> arrayList = new ArrayList<>();
+//        ArrayList<Integer> arrayList = new ArrayList<>();
 
         while (!pass) {
             try {
-                arrayList = askForInput();
+                AlgorithmSort.inputArr = askForInput();
                 pass = true;
             } catch (NullPointerException e) {
                 JOptionPane.showMessageDialog(null, "Cancelled by User!");
@@ -124,14 +126,19 @@ public class MainMenu {
 
         // if user clicked cancel don't proceed to sorting
         if (pass) {
+            if (AlgorithmSort.inputArr.size() <= 0) {
+                JOptionPane.showMessageDialog(null, "Please input at least two integers!", "Error", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+
             switch (sortType) {
                 case BUBBLE_SORT:
-                    System.out.println("Array size = " + arrayList.size());
-                    new BubbleSort(jframe, arrayList);
+                    System.out.println("Array size = " + AlgorithmSort.inputArr.size());
+                    new BubbleSort(jframe);
                     jframe.setVisible(false);
                     break;
                 case SELECTION_SORT:
-                    new SelectionSort(jframe, arrayList);
+                    new SelectionSort(jframe);
                     jframe.setVisible(false);
                     break;
                 default:
@@ -147,15 +154,18 @@ public class MainMenu {
             public void run() {
                 try {
                     Clip clip = AudioSystem.getClip();
-                    AudioInputStream inputStream = AudioSystem.getAudioInputStream(
-                            MainMenu.class.getResourceAsStream("upbeat.wav")
-                    );
+                    // mark/reset lets a stream "unread" data back to the mark point
+                    // will not play in jar without this
+                    InputStream audioSrc = getClass().getResourceAsStream("upbeat.wav");
+                    InputStream bufferedIn = new BufferedInputStream(audioSrc);
+                    // Put audio back to AudioInputStream Doggo
+                    AudioInputStream inputStream = AudioSystem.getAudioInputStream(bufferedIn);
                     clip.open(inputStream);
                     gainControl =
                             (FloatControl) clip.getControl(FloatControl.Type.MASTER_GAIN);
                     clip.start();
                 } catch (Exception e) {
-                    System.out.println("Error playing music Doggo");
+                    System.out.println("Error playing music Doggo: " + e.getMessage());
                 }
             }
         }).start();
