@@ -6,10 +6,10 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
 public class BubbleSort extends AlgorithmSort {
-    Button btnStartBubbleSort;
-    Button nextPassButton;
+    Button btnStartBubbleSort, nextPassButton, resetButton;
     Thread animationThread;
-    String BTN_LABEL = "Sort (Bubble Sort)";
+    String BTN_LABEL = "Bubble Sort";
+    final static int BTN_RELATIVE_VAL = 10;
 
     public BubbleSort(final JFrame mainFrame) {
         super();
@@ -55,6 +55,8 @@ public class BubbleSort extends AlgorithmSort {
 
         createBoxes();
 
+        // ADD BUTTONS
+        jframe.add(createResetButton());
         jframe.add(createSortingButton());
         jframe.add(createNextPassButton());
 
@@ -65,27 +67,6 @@ public class BubbleSort extends AlgorithmSort {
         showLegends(jframe);
 
         jframe.setVisible(true);
-    }
-
-    public Button createSortingButton() {
-        btnStartBubbleSort = new Button(BTN_LABEL);
-        btnStartBubbleSort.setBounds((screenWidth/2) - BTN_LABEL.length() * 4, (SCREEN_HEIGHT - 30) - 80, 120, 50);
-        btnStartBubbleSort.addActionListener(actionEvent -> {
-            if (btnStartBubbleSort.getLabel().equals(BTN_LABEL)) {
-                btnStartBubbleSort.setEnabled(false);
-                nextPassButton.setEnabled(false);
-                animationThread = new Thread(() -> {
-                    doBubbleSort();
-                });
-                animationThread.start();
-
-            } else if (btnStartBubbleSort.getLabel().equals("Reset")) {
-                resetBoxes();
-                btnStartBubbleSort.setLabel(BTN_LABEL);
-            }
-        });
-
-        return btnStartBubbleSort;
     }
 
     private int doBubbleSort() {
@@ -121,28 +102,73 @@ public class BubbleSort extends AlgorithmSort {
                     return 0;
             }
 
-            btnStartBubbleSort.setLabel("Reset");
-            btnStartBubbleSort.setEnabled(true);
-            nextPassButton.setEnabled(true);
+//            btnStartBubbleSort.setLabel("Reset");
+//            enableButtons();
 //        });
 //        animationThread.start();
         }
+        enableButtons();
         return getCurrentPass();
+    }
+
+    public Button createResetButton() {
+        resetButton = new Button("Reset");
+        resetButton.setBounds( ((screenWidth/2) - 70) - BTN_RELATIVE_VAL, (SCREEN_HEIGHT - 30) - 80, 50, 50);
+        resetButton.addActionListener(e -> {
+            resetPassValues();
+            resetBoxes();
+        });
+        return resetButton;
+    }
+
+    public Button createSortingButton() {
+        btnStartBubbleSort = new Button(BTN_LABEL);
+        btnStartBubbleSort.setBounds( ( ((screenWidth/2) + 30) - BTN_LABEL.length() * 4 ) - BTN_RELATIVE_VAL, (SCREEN_HEIGHT - 30) - 80, 80, 50);
+        btnStartBubbleSort.addActionListener(actionEvent -> {
+            /*if (btnStartBubbleSort.getLabel().equals(BTN_LABEL)) {*/
+                disableButtons();
+                animationThread = new Thread(() -> {
+                    doBubbleSort();
+                });
+                animationThread.start();
+
+                // IF RESET HAS BEEN CLICKED
+            /*} else if (btnStartBubbleSort.getLabel().equals("Reset")) {
+                resetPassValues();
+                resetBoxes();
+                btnStartBubbleSort.setLabel(BTN_LABEL);
+            }*/
+        });
+
+        return btnStartBubbleSort;
     }
 
     public Button createNextPassButton() {
         nextPassButton = new Button("Next Pass");
-        nextPassButton.setBounds((screenWidth/2) + 70, (SCREEN_HEIGHT - 30) - 80, 70, 50);
+        nextPassButton.setBounds( ((screenWidth/2) + 70) - BTN_RELATIVE_VAL, (SCREEN_HEIGHT - 30) - 80, 70, 50);
         nextPassButton.addActionListener(e -> {
             new Thread(() -> {
+                System.out.println("clicking next pass");
                 setMaxPass(getCurrentPass() + 1);
-
                 // execute after thread have finished
                 setCurrentPass(doBubbleSort());
             }).start();
 
         });
         return nextPassButton;
+    }
+
+    public void disableButtons() {
+        resetButton.setEnabled(false);
+        btnStartBubbleSort.setEnabled(false);
+        nextPassButton.setEnabled(false);
+    }
+
+    public void enableButtons() {
+        resetButton.setEnabled(true);
+        btnStartBubbleSort.setEnabled(true);
+        nextPassButton.setEnabled(true);
+
     }
 
 }

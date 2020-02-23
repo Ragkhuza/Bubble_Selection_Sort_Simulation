@@ -7,9 +7,9 @@ import java.awt.event.WindowEvent;
 
 public class SelectionSort extends AlgorithmSort {
     static Thread animationThread;
-    final static String BTN_LABEL = "Sort (Selection Sort)";
-    Button btnStartSelectionSort;
-    Button nextPassButton;
+    final static String BTN_LABEL = "Selection Sort";
+    Button btnStartSelectionSort, nextPassButton, resetButton;
+    final static int BTN_RELATIVE_VAL = 30;
 
     public SelectionSort(final JFrame mainFrame) {
         super();
@@ -53,6 +53,8 @@ public class SelectionSort extends AlgorithmSort {
 
         createBoxes();
 
+        // ADD BUTTONS
+        jframe.add(createResetButton());
         jframe.add(createSortingButton());
         jframe.add(createNextPassButton());
 
@@ -65,79 +67,116 @@ public class SelectionSort extends AlgorithmSort {
         jframe.setVisible(true);
     }
 
+    private int doSelectionSort() {
+        if (getMaxPass() <= inputArr.size()) {
+            System.out.println("currentPass: " + getCurrentPass());
+            System.out.println("maxPass: " + getMaxPass());
+            /*animationThread = new Thread(() -> {*/
+                for (int i = getCurrentPass(); i < getMaxPass() - 1; i++) {
+                    changeColor(boxes[i], Color.CYAN, false);
+                    printArray(inputArr, i);
+                    // Find the minimum element in unsorted array
+                    int min_idx = i;
+                    for (int j = i + 1; j < inputArr.size(); j++) {
+                        System.out.println("currentPass: " + getCurrentPass());
+                        System.out.println("maxPass: " + getMaxPass());
+                        changeColor(boxes[j], Color.RED, false);
+                        changeColor(boxes[j], Color.WHITE, false);
+                        if (inputArr.get(j) <= inputArr.get(min_idx)) {
+
+                            // change the color of previous minimum box to green
+                            if (j > 0)
+                                if (boxes[min_idx].getBackground() == Color.GREEN)
+                                    changeColor(boxes[min_idx], Color.WHITE, true);
+
+                            min_idx = j;
+                            changeColor(boxes[min_idx], Color.GREEN, false);
+                        }
+                    }
+
+                    // Swap the found minimum element with the first element
+                    int temp = inputArr.get(min_idx);
+                    inputArr.set(min_idx, inputArr.get(i));
+                    inputArr.set(i, temp);
+
+                    if (!(i >= inputArr.size()))
+                        swap(i, min_idx,"selection_sort");
+
+                    changeColor(boxes[i], Color.WHITE, false);
+                }
+
+//                btnStartSelectionSort.setLabel("Reset");
+            /*});
+            animationThread.start();*/
+        }
+        enableButtons();
+        return getCurrentPass();
+    }
+
+    public Button createResetButton() {
+        resetButton = new Button("Reset");
+        resetButton.setBounds( ((screenWidth/2) - 70) - BTN_RELATIVE_VAL, (SCREEN_HEIGHT - 30) - 80, 50, 50);
+        resetButton.addActionListener(e -> {
+            resetPassValues();
+            resetBoxes();
+        });
+        return resetButton;
+    }
+
     public Button createSortingButton() {
         btnStartSelectionSort = new Button(BTN_LABEL);
-        btnStartSelectionSort.setBounds((screenWidth /2) - BTN_LABEL.length() * 3, (SCREEN_HEIGHT - 30) - 80, 120, 50);
+        btnStartSelectionSort.setBounds( (((screenWidth/2) + 30) - BTN_LABEL.length() * 3) - BTN_RELATIVE_VAL, (SCREEN_HEIGHT - 30) - 80, 100, 50);
         btnStartSelectionSort.addActionListener(actionEvent -> {
-            if (btnStartSelectionSort.getLabel().equals(BTN_LABEL)) {
+//            if (btnStartSelectionSort.getLabel().equals(BTN_LABEL)) {
 
-                btnStartSelectionSort.setEnabled(false);
-                doSelectionSort();
+                disableButtons();
 
-            } else if (btnStartSelectionSort.getLabel().equals("Reset")) {
+                animationThread = new Thread(() -> {
+                    doSelectionSort();
+                });
+
+                animationThread.start();
+
+                // IF RESET HAS BEEN CLICKED
+            /*} else if (btnStartSelectionSort.getLabel().equals("Reset")) {
+                resetPassValues();
                 resetBoxes();
                 btnStartSelectionSort.setLabel(BTN_LABEL);
-            }
+            }*/
 
         });
 
         return btnStartSelectionSort;
     }
 
-    private int doSelectionSort() {
-        animationThread = new Thread(() -> {
-            for (int i = 0; i < inputArr.size() - 1; i++) {
-                changeColor(boxes[i], Color.CYAN, false);
-                printArray(inputArr, i);
-                // Find the minimum element in unsorted array
-                int min_idx = i;
-                for (int j = i + 1; j < inputArr.size(); j++) {
-                    changeColor(boxes[j], Color.RED, false);
-                    changeColor(boxes[j], Color.WHITE, false);
-                    if (inputArr.get(j) <= inputArr.get(min_idx)) {
-
-                        // change the color of previous minimum box to green
-                        if (j > 0)
-                            if (boxes[min_idx].getBackground() == Color.GREEN)
-                                changeColor(boxes[min_idx], Color.WHITE, true);
-
-                        min_idx = j;
-                        changeColor(boxes[min_idx], Color.GREEN, false);
-                    }
-                }
-
-                // Swap the found minimum element with the first element
-                int temp = inputArr.get(min_idx);
-                inputArr.set(min_idx, inputArr.get(i));
-                inputArr.set(i, temp);
-
-                if (!(i >= inputArr.size()))
-                    swap(i, min_idx,"selection_sort");
-
-                changeColor(boxes[i], Color.WHITE, false);
-            }
-
-            btnStartSelectionSort.setLabel("Reset");
-            btnStartSelectionSort.setEnabled(true);
-        });
-        animationThread.start();
-
-        return getCurrentPass();
-    }
-
     public Button createNextPassButton() {
         nextPassButton = new Button("Next Pass");
-        nextPassButton.setBounds((screenWidth/2) + 70, (SCREEN_HEIGHT - 30) - 80, 70, 50);
+        nextPassButton.setBounds( ((screenWidth/2) + 95) - BTN_RELATIVE_VAL, (SCREEN_HEIGHT - 30) - 80, 70, 50);
         nextPassButton.addActionListener(e -> {
             new Thread(() -> {
-                setMaxPass(getCurrentPass() + 1);
-
+                disableButtons();
+                System.out.println("clicking next pass");
+                setMaxPass(getCurrentPass() + 2);
                 // execute after thread have finished
-                setCurrentPass(doSelectionSort());
+                setCurrentPass(doSelectionSort() + 1);
+
+                enableButtons();
             }).start();
 
         });
         return nextPassButton;
+    }
+
+    public void disableButtons() {
+        resetButton.setEnabled(false);
+        btnStartSelectionSort.setEnabled(false);
+        nextPassButton.setEnabled(false);
+    }
+
+    public void enableButtons() {
+        resetButton.setEnabled(true);
+        btnStartSelectionSort.setEnabled(true);
+        nextPassButton.setEnabled(true);
     }
 
 }

@@ -23,12 +23,19 @@ public abstract class AlgorithmSort {
     static int changeColorSpeed = 300;
     static int lastArr;
 
+    public abstract Button createResetButton();
     public abstract Button createSortingButton();
-
     public abstract Button createNextPassButton();
+    public abstract void disableButtons();
+    public abstract void enableButtons();
 
     public AlgorithmSort() {
         oldInputArr = (ArrayList<Integer>) AlgorithmSort.inputArr.clone();
+        resetPassValues();
+    }
+
+    public void resetPassValues() {
+        System.out.println("Resetting pass values");
         initializePass(0, oldInputArr.size());
         lastArr = inputArr.size();
     }
