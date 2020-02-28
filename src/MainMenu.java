@@ -1,3 +1,4 @@
+import org.jdesktop.swingx.autocomplete.AutoCompleteDecorator;
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.Clip;
@@ -9,7 +10,7 @@ import java.io.InputStream;
 import java.util.ArrayList;
 
 public class MainMenu {
-    private final static int screenWidth = 300;
+    private final static int screenWidth = 320;
     private final static int SCREEN_HEIGHT = 400;
     private static JFrame jframe;
     private static JButton[] jButtons;
@@ -22,6 +23,7 @@ public class MainMenu {
     public static void main(String[] args) {
         new MainMenu();
         playBackgroundMusic();
+//        testDialog();
     }
 
     public MainMenu() {
@@ -29,6 +31,7 @@ public class MainMenu {
         final int BTN_HEIGHT = 30;
 
         jframe = new JFrame("Algorithm Simulations");
+        jframe.setResizable(false);
         jframe.setLayout(new BorderLayout());
         jframe.setContentPane(new JLabel(new ImageIcon(getClass().getResource(BACKGROUND_IMG))));
 
@@ -84,22 +87,40 @@ public class MainMenu {
         jframe.setVisible(true);
     }
 
+/*    public static void testDialog() {
+        JFrame frame = new JFrame("");
+        AutoCompleteDecorator decorator;
+        JComboBox<String> combobox;
+
+        combobox = new JComboBox<String>(new String[]{"","27 35 23 65 67", "78 23 45 6 75",
+                "23 45 56 76 89", "23 45 67 789 9", "34 67 23 78 23 44"});
+        combobox.setEditable(true);
+        AutoCompleteDecorator.decorate(combobox);
+        frame.setSize(400,400);
+        frame.setLocationRelativeTo(null);
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setLayout(new FlowLayout());
+
+        frame.add(combobox);
+        frame.setVisible(true);
+    }*/
+
     // get input from user & verify if correct
     static protected ArrayList<Integer> askForInput() {
         ArrayList<Integer> arr = new ArrayList<Integer>();
         String input = "";
 
-                input = JOptionPane.showInputDialog("Please input at least 2 numbers: (separated by ONE space)");
-                arr = new ArrayList<Integer>();
+        input = JOptionPane.showInputDialog("Please input at least 2 numbers: (separated by ONE space)");
+        arr = new ArrayList<Integer>();
 
-                String[] inputArr = input.trim().split(" ");
+        String[] inputArr = input.trim().split(" ");
 
-                for (String inp : inputArr)
-                    arr.add(Integer.parseInt(inp));
+        for (String inp : inputArr)
+            arr.add(Integer.parseInt(inp));
 
-                System.out.print("Inputs: ");
-                for (Integer i : arr)
-                    System.out.print(i + " ");
+        System.out.print("Inputs: ");
+        for (Integer i : arr)
+            System.out.print(i + " ");
 
 
         return arr;
@@ -108,7 +129,6 @@ public class MainMenu {
     // The main driver for each sorting algorithm
     private void startSorting(int sortType) {
         boolean pass = false;
-//        ArrayList<Integer> arrayList = new ArrayList<>();
 
         while (!pass) {
             try {

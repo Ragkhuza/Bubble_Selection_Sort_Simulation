@@ -149,7 +149,7 @@ public abstract class AlgorithmSort {
     public void resetBoxes() {
         System.out.println("arr" + inputArr);
         System.out.println("old arr" + oldInputArr);
-//        arr = oldArr;
+
         inputArr = (ArrayList<Integer>) oldInputArr.clone();
         System.out.println("new arr" + inputArr);
 

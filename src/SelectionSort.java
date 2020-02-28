@@ -35,7 +35,8 @@ public class SelectionSort extends AlgorithmSort {
                 // @DOGGO this is my last resort
                 // if animation is still on going stop all the system
                 if(animationThread.isAlive()) {
-                    int confirm = JOptionPane.showConfirmDialog(null, "Closing this window while animating will terminate the whole program.", "Message", JOptionPane.OK_CANCEL_OPTION);
+                    int confirm = JOptionPane.showConfirmDialog(null, "Closing this window while animating will terminate the whole program.",
+                            "Message", JOptionPane.OK_CANCEL_OPTION);
 
                     if (confirm == 0)
                         System.exit(0);
@@ -65,11 +66,11 @@ public class SelectionSort extends AlgorithmSort {
         showGroupBanner(jframe);
 
         jframe.setVisible(true);
+        updateLegends(0, 0, 0); // reset all legends to zero
     }
 
     private int doSelectionSort() {
         if (getMaxPass() <= inputArr.size()) {
-            updateLegends(0, 0, 0); // reset all legends to zero
             updateLegend(2, "compare: ", true); // update the 3rd legend for selection sort
             System.out.println("currentPass: " + getCurrentPass());
             System.out.println("maxPass: " + getMaxPass());
@@ -106,7 +107,8 @@ public class SelectionSort extends AlgorithmSort {
                 if (!(i >= inputArr.size()))
                     swap(i, min_idx,"selection_sort");
 
-                updateLegend(0, (i+1) + "", false); // update pass
+                if (i < inputArr.size() - 1)
+                    updateLegend(0, (i + 1) + "", false); // update pass
                 updateLegend(2, "compare: "+i, true); // update compare
                 changeColor(boxes[i], Color.CYAN, false);
             }
@@ -150,10 +152,9 @@ public class SelectionSort extends AlgorithmSort {
             new Thread(() -> {
                 disableButtons();
                 System.out.println("clicking next pass");
-                setMaxPass(getCurrentPass() + 2);
+                setMaxPass(getCurrentPass() + 1);
                 // execute after thread have finished
                 setCurrentPass(doSelectionSort() + 1);
-
                 enableButtons();
             }).start();
 
