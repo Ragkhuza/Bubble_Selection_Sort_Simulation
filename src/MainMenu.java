@@ -125,14 +125,14 @@ public class MainMenu {
 
         // when user clicked cancel
         if (showInputDialog() != 0)
-            throw new NullPointerException();
+            throw new NullPointerException("Err in getInput #1");
 
         // will not really trigger the exception (hopefully)
         // but doggo wants to make sure everything is working fine
         try {
             input = JComboOptions.getSelectedItem().toString();
         } catch (Exception e) {
-            JOptionPane.showMessageDialog(null,"You didn't not input a valid number.");
+            throw new NullPointerException("Err in getInput #2");
         }
 
 //        input = JOptionPane.showInputDialog("Please input at least 2 numbers: (separated by ONE space)");

@@ -67,11 +67,12 @@ public class SelectionSort extends AlgorithmSort {
 
         jframe.setVisible(true);
         updateLegends(0, 0, 0); // reset all legends to zero
+        updateLegend(2, "done: 0", true);
     }
 
     private int doSelectionSort() {
         if (getMaxPass() <= inputArr.size()) {
-            updateLegend(2, "compare: ", true); // update the 3rd legend for selection sort
+            updateLegend(2, "done: ", true); // update the 3rd legend for selection sort
             System.out.println("currentPass: " + getCurrentPass());
             System.out.println("maxPass: " + getMaxPass());
             for (int i = getCurrentPass(); i <= getMaxPass() - 1; i++) {
@@ -81,7 +82,7 @@ public class SelectionSort extends AlgorithmSort {
                 int min_idx = i;
                 for (int j = i + 1; j < inputArr.size(); j++) {
                     updateLegend(1, j+"",false); // update current
-                    updateLegend(2, "compare: "+i, true); // update compare
+                    updateLegend(2, "done: "+i, true); // update done
 
                     System.out.println("currentPass: " + getCurrentPass());
                     System.out.println("maxPass: " + getMaxPass());
@@ -109,7 +110,7 @@ public class SelectionSort extends AlgorithmSort {
 
                 if (i < inputArr.size() - 1)
                     updateLegend(0, (i + 1) + "", false); // update pass
-                updateLegend(2, "compare: "+i, true); // update compare
+                updateLegend(2, "done: "+i, true); // update done
                 changeColor(boxes[i], Color.CYAN, false);
             }
 
