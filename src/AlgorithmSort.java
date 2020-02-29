@@ -36,20 +36,42 @@ public abstract class AlgorithmSort {
         undoStack.push(undoObject);
     }
 
-    public void undoPass() {
+    public void undoPass(String type) {
         System.out.println("Undoing");
-        inputArr = undoStack.lastElement().inputList;
-        setCurrentPass(undoStack.lastElement().currentPass);
-        resetBoxes(inputArr);
-        undoBoxesColor(undoStack.lastElement().lastArr);
-        lastArr = undoStack.lastElement().lastArr;
-        System.out.println(undoStack.pop().inputList);
+        if (type.toLowerCase().equals("bubble")) {
+            inputArr = undoStack.lastElement().inputList;
+            setCurrentPass(undoStack.lastElement().currentPass);
+            resetBoxes(inputArr);
+            undoBoxesColor(undoStack.lastElement().limiter, 1);
+            lastArr = undoStack.lastElement().limiter;
+            System.out.println("Popped from undoStack" + undoStack.pop().inputList);
+        } else if (type.toLowerCase().equals("selection")) {
+            inputArr = undoStack.lastElement().inputList;
+            setCurrentPass(undoStack.lastElement().currentPass);
+            resetBoxes(inputArr);
+            undoBoxesColor(undoStack.lastElement().limiter, 2);
+            setMaxPass(undoStack.lastElement().limiter);
+            System.out.println("Popped from undoStack" + undoStack.pop().inputList);
+        } else {
+            // in case I mistype things
+            JOptionPane.showMessageDialog(null, "Doggo must see AlgorithmSort.java@51");
+            System.out.println("The type was invalid, input: " + type);
+        }
+
+
     }
 
-    private void undoBoxesColor(int lastArr) {
-        for (int i = lastArr; i < inputArr.size(); i++) {
-            changeColor(boxes[i], Color.CYAN, true);
-        }
+    private void undoBoxesColor(int limiter, int type) {
+        if (type == 1)
+            for (int i = limiter; i < inputArr.size(); i++) {
+                changeColor(boxes[i], Color.CYAN, true);
+            }
+        else if (type == 2)
+            for (int i = 0; i < (limiter - 1); i++) {
+                changeColor(boxes[i], Color.CYAN, true);
+            }
+        else
+            System.out.println("Opps you mistype type in undoBoxes, inputted: " + type);
     }
 
     public void resetUndoStack() {

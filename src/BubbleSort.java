@@ -131,7 +131,7 @@ public class BubbleSort extends AlgorithmSort {
                 return;
             }
 
-            undoPass();
+            undoPass("bubble");
             updateLegend(0, getCurrentPass()+"", false);
             updateLegend(1, "0", false);
             updateLegend(2, "0", false);

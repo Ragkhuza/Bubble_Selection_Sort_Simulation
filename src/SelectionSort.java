@@ -10,7 +10,7 @@ public class SelectionSort extends AlgorithmSort {
     final static int BTN_RELATIVE_VAL = 30;
     static Thread animationThread;
 
-    Button btnStartSelectionSort, nextPassButton, resetButton;
+    Button btnStartSelectionSort, nextPassButton, resetButton, undoButton;
 
     public SelectionSort(final JFrame mainFrame) {
         super();
@@ -56,6 +56,7 @@ public class SelectionSort extends AlgorithmSort {
         createBoxes();
 
         // ADD BUTTONS
+        jframe.add(createUndoButton());
         jframe.add(createResetButton());
         jframe.add(createSortingButton());
         jframe.add(createNextPassButton());
@@ -77,6 +78,7 @@ public class SelectionSort extends AlgorithmSort {
             System.out.println("currentPass: " + getCurrentPass());
             System.out.println("maxPass: " + getMaxPass());
             for (int i = getCurrentPass(); i <= getMaxPass() - 1; i++) {
+                updateUndoStack(inputArr, getCurrentPass(), getMaxPass());
                 changeColor(boxes[i], Color.CYAN, false);
                 printArray(inputArr, i);
                 // Find the minimum element in unsorted array
@@ -121,12 +123,38 @@ public class SelectionSort extends AlgorithmSort {
         return getCurrentPass();
     }
 
+    public Button createUndoButton() {
+        undoButton = new Button("Prev Pass");
+        undoButton.setBounds( ((screenWidth/2) - 145) - BTN_RELATIVE_VAL, (SCREEN_HEIGHT - 30) - 80, 70, 50);
+        undoButton.setEnabled(false);
+        undoButton.addActionListener(e -> {
+            if (undoStack.size() <= 0) {
+                undoButton.setEnabled(false);
+                System.out.println("Cannot Undo Stack is full");
+                return;
+            }
+
+            undoPass("selection");
+            updateLegend(0, getCurrentPass()+"", false);
+            updateLegend(1, "0", false);
+            updateLegend(2, "0", false);
+
+            if (undoStack.size() <= 0)
+                undoButton.setEnabled(false);
+        });
+
+        return undoButton;
+    }
+
     public Button createResetButton() {
         resetButton = new Button("Reset");
         resetButton.setBounds( ((screenWidth/2) - 70) - BTN_RELATIVE_VAL, (SCREEN_HEIGHT - 30) - 80, 50, 50);
         resetButton.addActionListener(e -> {
             resetPassValues();
             resetBoxes();
+            resetUndoStack();
+            updateLegends(0,0,0);
+            undoButton.setEnabled(false);
         });
 
         return resetButton;
@@ -171,12 +199,14 @@ public class SelectionSort extends AlgorithmSort {
     }
 
     public void disableButtons() {
+        undoButton.setEnabled(false);
         resetButton.setEnabled(false);
         btnStartSelectionSort.setEnabled(false);
         nextPassButton.setEnabled(false);
     }
 
     public void enableButtons() {
+        undoButton.setEnabled(true);
         resetButton.setEnabled(true);
         btnStartSelectionSort.setEnabled(true);
         nextPassButton.setEnabled(true);
