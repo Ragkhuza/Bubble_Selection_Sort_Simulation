@@ -225,7 +225,8 @@ public abstract class AlgorithmSort {
         for (int i = 0; i < members.length; i++) {
             int memberNameWidth = (i + 1) * (members[i].length() * 10);
             membersJLabel[i] = new JLabel(members[i]);
-            membersJLabel[i].setBounds(screenWidth + (150 * i) , 140, memberNameWidth,40);
+            membersJLabel[i].setBounds(screenWidth + (150 * i) , 140, memberNameWidth,35);
+            membersJLabel[i].setForeground(Color.WHITE);
             algoFrame.add(membersJLabel[i]);
 
             memberTotalWidth += (screenWidth) + memberNameWidth;
@@ -242,13 +243,23 @@ public abstract class AlgorithmSort {
                     int y = membersJLabel[finalI].getY();
                     int width = membersJLabel[finalI].getWidth();
                     int height = membersJLabel[finalI].getHeight();
+                    boolean reversed = true;
 
-                    for (int j = 0; j < finalMemberTotalWidth; j++) {
-                        try {
-                            TimeUnit.MILLISECONDS.sleep(10);
-                            membersJLabel[finalI].setBounds(x--, y, width, height);
-                        } catch (InterruptedException e) {
-                            System.out.println("[WARNING]User interrupted the animations, Threads will keep going until destroyed.");
+                    System.out.println("FINAL MEMBER TOTAL WIDTH: " + finalMemberTotalWidth);
+                    while(true) {
+                        reversed = !reversed;
+                        for (int j = 0; j < (int)(finalMemberTotalWidth / 3); j++) {
+                            try {
+                                if (reversed) {
+                                    TimeUnit.MILLISECONDS.sleep(10);
+                                    membersJLabel[finalI].setBounds(x++, y, width, height);
+                                } else {
+                                    TimeUnit.MILLISECONDS.sleep(10);
+                                    membersJLabel[finalI].setBounds(x--, y, width, height);
+                                }
+                            } catch (InterruptedException e) {
+                                System.out.println("[WARNING]User interrupted the animations, Threads will keep going until destroyed.");
+                            }
                         }
                     }
                 }
@@ -307,16 +318,16 @@ public abstract class AlgorithmSort {
 
             switch (i) {
                 case 0:
-                    legendsJLabels[i].setForeground(Color.YELLOW);
+                    legendsJLabels[0].setForeground(Color.getHSBColor(0.8f, 0.5f, 0.9f));
                     break;
                 case 1:
-                    legendsJLabels[i].setForeground(Color.RED);
+                    legendsJLabels[1].setForeground(Color.RED);
                     break;
                 case 2:
-                    legendsJLabels[i].setForeground(Color.CYAN);
+                    legendsJLabels[2].setForeground(Color.CYAN);
                     break;
                 case 3:
-                    legendsJLabels[i].setForeground(Color.GREEN);
+                    legendsJLabels[3].setForeground(Color.GREEN);
                     break;
                 default:
                     System.out.println("ERROR in show legends");

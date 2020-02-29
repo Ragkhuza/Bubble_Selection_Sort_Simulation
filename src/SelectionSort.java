@@ -7,7 +7,7 @@ import java.awt.event.WindowEvent;
 
 public class SelectionSort extends AlgorithmSort {
     final static String BTN_LABEL = "Selection Sort";
-    final static int BTN_RELATIVE_VAL = 30;
+    final static int BTN_RELATIVE_VAL = -20;
     static Thread animationThread;
 
     Button btnStartSelectionSort, nextPassButton, resetButton, undoButton;
@@ -125,7 +125,7 @@ public class SelectionSort extends AlgorithmSort {
 
     public Button createUndoButton() {
         undoButton = new Button("Prev Pass");
-        undoButton.setBounds( ((screenWidth/2) - 145) - BTN_RELATIVE_VAL, (SCREEN_HEIGHT - 30) - 80, 70, 50);
+        undoButton.setBounds( ((screenWidth/2) - 145) - BTN_RELATIVE_VAL, (SCREEN_HEIGHT - 30) - 80, 70, 30);
         undoButton.setEnabled(false);
         undoButton.addActionListener(e -> {
             if (undoStack.size() <= 0) {
@@ -148,12 +148,13 @@ public class SelectionSort extends AlgorithmSort {
 
     public Button createResetButton() {
         resetButton = new Button("Reset");
-        resetButton.setBounds( ((screenWidth/2) - 70) - BTN_RELATIVE_VAL, (SCREEN_HEIGHT - 30) - 80, 50, 50);
+        resetButton.setBounds( ((screenWidth/2) - 70) - BTN_RELATIVE_VAL, (SCREEN_HEIGHT - 30) - 80, 50, 30);
         resetButton.addActionListener(e -> {
             resetPassValues();
             resetBoxes();
             resetUndoStack();
             updateLegends(0,0,0);
+            enableButtons();
             undoButton.setEnabled(false);
         });
 
@@ -162,13 +163,15 @@ public class SelectionSort extends AlgorithmSort {
 
     public Button createSortingButton() {
         btnStartSelectionSort = new Button(BTN_LABEL);
-        btnStartSelectionSort.setBounds( (((screenWidth/2) + 30) - BTN_LABEL.length() * 3) - BTN_RELATIVE_VAL, (SCREEN_HEIGHT - 30) - 80, 100, 50);
+        btnStartSelectionSort.setBounds( (((screenWidth/2) + 30) - BTN_LABEL.length() * 3) - BTN_RELATIVE_VAL, (SCREEN_HEIGHT - 30) - 80, 100, 30);
         btnStartSelectionSort.addActionListener(actionEvent -> {
             setMaxPass(inputArr.size());
             disableButtons();
 
             animationThread = new Thread(() -> {
                 doSelectionSort();
+                undoButton.setEnabled(false);
+                nextPassButton.setEnabled(false);
             });
             animationThread.start();
 
@@ -179,7 +182,7 @@ public class SelectionSort extends AlgorithmSort {
 
     public Button createNextPassButton() {
         nextPassButton = new Button("Next Pass");
-        nextPassButton.setBounds( ((screenWidth/2) + 95) - BTN_RELATIVE_VAL, (SCREEN_HEIGHT - 30) - 80, 70, 50);
+        nextPassButton.setBounds( ((screenWidth/2) + 95) - BTN_RELATIVE_VAL, (SCREEN_HEIGHT - 30) - 80, 70, 30);
         nextPassButton.addActionListener(e -> {
             new Thread(() -> {
                 nextPass();

@@ -122,7 +122,7 @@ public class BubbleSort extends AlgorithmSort {
 
     public Button createUndoButton() {
         undoButton = new Button("Prev Pass");
-        undoButton.setBounds( ((screenWidth/2) - 145) - BTN_RELATIVE_VAL, (SCREEN_HEIGHT - 30) - 80, 70, 50);
+        undoButton.setBounds( ((screenWidth/2) - 145) - BTN_RELATIVE_VAL, (SCREEN_HEIGHT - 30) - 80, 70, 30);
         undoButton.setEnabled(false);
         undoButton.addActionListener(e -> {
             if (undoStack.size() <= 0) {
@@ -145,12 +145,13 @@ public class BubbleSort extends AlgorithmSort {
 
     public Button createResetButton() {
         resetButton = new Button("Reset");
-        resetButton.setBounds( ((screenWidth/2) - 70) - BTN_RELATIVE_VAL, (SCREEN_HEIGHT - 30) - 80, 50, 50);
+        resetButton.setBounds( ((screenWidth/2) - 70) - BTN_RELATIVE_VAL, (SCREEN_HEIGHT - 30) - 80, 50, 30);
         resetButton.addActionListener(e -> {
             resetPassValues();
             resetBoxes();
             resetUndoStack();
             updateLegends(0,0,0);
+            enableButtons();
             undoButton.setEnabled(false);
         });
 
@@ -159,12 +160,14 @@ public class BubbleSort extends AlgorithmSort {
 
     public Button createSortingButton() {
         btnStartBubbleSort = new Button(BTN_LABEL);
-        btnStartBubbleSort.setBounds( ( ((screenWidth/2) + 30) - BTN_LABEL.length() * 4 ) - BTN_RELATIVE_VAL, (SCREEN_HEIGHT - 30) - 80, 80, 50);
+        btnStartBubbleSort.setBounds( ( ((screenWidth/2) + 30) - BTN_LABEL.length() * 4 ) - BTN_RELATIVE_VAL, (SCREEN_HEIGHT - 30) - 80, 80, 30);
         btnStartBubbleSort.addActionListener(actionEvent -> {
             setMaxPass(inputArr.size());
             disableButtons();
             animationThread = new Thread(() -> {
                 doBubbleSort();
+                undoButton.setEnabled(false);
+                nextPassButton.setEnabled(false);
             });
             animationThread.start();
         });
@@ -174,7 +177,7 @@ public class BubbleSort extends AlgorithmSort {
 
     public Button createNextPassButton() {
         nextPassButton = new Button("Next Pass");
-        nextPassButton.setBounds( ((screenWidth/2) + 70) - BTN_RELATIVE_VAL, (SCREEN_HEIGHT - 30) - 80, 70, 50);
+        nextPassButton.setBounds( ((screenWidth/2) + 70) - BTN_RELATIVE_VAL, (SCREEN_HEIGHT - 30) - 80, 70, 30);
         nextPassButton.addActionListener(e -> {
             new Thread(() -> {
                 nextPass();

@@ -102,7 +102,7 @@ public class MainMenu {
         instructions.setForeground(Color.gray);
 
         final JComponent[] inputs = new JComponent[] {
-                new JLabel("Please input at least 2 numbers: (separated by ONE space)"),
+                new JLabel("Please input at least 3 numbers: (separated by ONE space)"),
                 instructions,
                 JComboOptions,
         };
@@ -169,6 +169,12 @@ public class MainMenu {
                 System.out.println("ERROR in askForInput: " + e.getMessage());
                 JOptionPane.showMessageDialog(null, "Please input a valid list of number!");
             }
+        }
+
+        if (AlgorithmSort.inputArr.size() < 3) {
+            JOptionPane.showMessageDialog(null, "Please input at least 3 integers", "Error", JOptionPane.ERROR_MESSAGE);
+            startSorting(sortType);
+            return;
         }
 
         if (pass) {
