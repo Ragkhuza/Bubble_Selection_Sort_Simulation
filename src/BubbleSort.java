@@ -142,15 +142,19 @@ public class BubbleSort extends AlgorithmSort {
         nextPassButton.setBounds( ((screenWidth/2) + 70) - BTN_RELATIVE_VAL, (SCREEN_HEIGHT - 30) - 80, 70, 50);
         nextPassButton.addActionListener(e -> {
             new Thread(() -> {
-                disableButtons();
-                System.out.println("clicking next pass");
-                setMaxPass(getCurrentPass() + 1);
-                // execute after thread have finished
-                setCurrentPass(doBubbleSort());
+                nextPass();
             }).start();
 
         });
         return nextPassButton;
+    }
+
+    private void nextPass() {
+        disableButtons();
+        System.out.println("next pass btn clicked");
+        setMaxPass(getCurrentPass() + 1);
+        // execute after thread have finished
+        setCurrentPass(doBubbleSort());
     }
 
     public void disableButtons() {

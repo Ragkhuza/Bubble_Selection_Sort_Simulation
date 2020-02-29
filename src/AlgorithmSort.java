@@ -9,7 +9,7 @@ import java.util.concurrent.TimeUnit;
 public abstract class AlgorithmSort {
     final static int ANIMATE_UP = 0, ANIMATE_DOWN = 1, ANIMATE_LEFT = 2, ANIMATE_RIGHT = 3;
     static int screenWidth = 1200, animateSpeed = 5, changeColorSpeed = 300, lastArr;
-    static int currentPass, maxPass, SCREEN_HEIGHT = 300;
+    static int currentPass, maxPass, SCREEN_HEIGHT = 300; // should made this private but can't risk errors
     static Button[] boxes;
     static ArrayList<Integer> inputArr;
     static JFrame jframe;
@@ -55,7 +55,7 @@ public abstract class AlgorithmSort {
         maxPass = mp;
     }
 
-    static protected void changeColor(Button btn, Color c, boolean instant) {
+    protected static void changeColor(Button btn, Color c, boolean instant) {
         int speed = changeColorSpeed;
 
         if (instant)
@@ -70,7 +70,7 @@ public abstract class AlgorithmSort {
         btn.setBackground(c);
     }
 
-    static protected void animate(Button btn, int num, int speed, int direction) {
+    protected static void animate(Button btn, int num, int speed, int direction) {
         System.out.println("Animating with speed of : " + speed);
         switch (direction){
             case ANIMATE_UP:
