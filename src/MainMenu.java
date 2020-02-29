@@ -1,4 +1,5 @@
 import org.jdesktop.swingx.autocomplete.AutoCompleteDecorator;
+
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.Clip;
@@ -10,6 +11,7 @@ import java.io.InputStream;
 import java.util.ArrayList;
 
 public class MainMenu {
+    private static JComboBox<String> JComboOptions;
     private final static int screenWidth = 320;
     private final static int SCREEN_HEIGHT = 400;
     private static JFrame jframe;
@@ -19,11 +21,11 @@ public class MainMenu {
     private static FloatControl gainControl;
     private static JButton muteButton;
     public final static String BACKGROUND_IMG = "bg.jpg";
+    private static ArrayList<String> previousInputs = new ArrayList<>();
 
     public static void main(String[] args) {
         new MainMenu();
         playBackgroundMusic();
-//        testDialog();
     }
 
     public MainMenu() {
@@ -87,30 +89,53 @@ public class MainMenu {
         jframe.setVisible(true);
     }
 
-/*    public static void testDialog() {
-        JFrame frame = new JFrame("");
-        AutoCompleteDecorator decorator;
-        JComboBox<String> combobox;
+    private static int showInputDialog() {
+        String[] p = new String[previousInputs.size()];
 
-        combobox = new JComboBox<String>(new String[]{"","27 35 23 65 67", "78 23 45 6 75",
-                "23 45 56 76 89", "23 45 67 789 9", "34 67 23 78 23 44"});
-        combobox.setEditable(true);
-        AutoCompleteDecorator.decorate(combobox);
-        frame.setSize(400,400);
-        frame.setLocationRelativeTo(null);
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setLayout(new FlowLayout());
+        for (int i = 0, j = (p.length - 1); i < p.length; i++, j--)
+            p[i] = previousInputs.get(j);
 
-        frame.add(combobox);
-        frame.setVisible(true);
-    }*/
+        JComboOptions = new JComboBox<String>(p);
+        JComboOptions.setEditable(true);
+        AutoCompleteDecorator.decorate(JComboOptions);
+
+        final JComponent[] inputs = new JComponent[] {
+                new JLabel("Please input at least 2 numbers: (separated by ONE space)"),
+                JComboOptions,
+        };
+
+        return JOptionPane.showConfirmDialog(null, inputs, "My custom dialog", JOptionPane.OK_CANCEL_OPTION);
+    }
+
+    private void updatePreviousInputs() {
+        // update previous inputs and check for exception (just in case)
+        try {
+            // dont add duplicates
+            if (!previousInputs.contains(JComboOptions.getSelectedItem().toString()))
+                previousInputs.add(JComboOptions.getSelectedItem().toString());
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(null, "Warning: Please contact Doggo. Reason: MM@131");
+        }
+    }
 
     // get input from user & verify if correct
-    static protected ArrayList<Integer> askForInput() {
+    protected static ArrayList<Integer> getInput() throws NullPointerException{
         ArrayList<Integer> arr = new ArrayList<Integer>();
         String input = "";
 
-        input = JOptionPane.showInputDialog("Please input at least 2 numbers: (separated by ONE space)");
+        // when user clicked cancel
+        if (showInputDialog() != 0)
+            throw new NullPointerException();
+
+        // will not really trigger the exception (hopefully)
+        // but doggo wants to make sure everything is working fine
+        try {
+            input = JComboOptions.getSelectedItem().toString();
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(null,"You didn't not input a valid number.");
+        }
+
+//        input = JOptionPane.showInputDialog("Please input at least 2 numbers: (separated by ONE space)");
         arr = new ArrayList<Integer>();
 
         String[] inputArr = input.trim().split(" ");
@@ -122,7 +147,6 @@ public class MainMenu {
         for (Integer i : arr)
             System.out.print(i + " ");
 
-
         return arr;
     }
 
@@ -132,25 +156,28 @@ public class MainMenu {
 
         while (!pass) {
             try {
-                AlgorithmSort.inputArr = askForInput();
+                AlgorithmSort.inputArr = getInput();
                 pass = true;
             } catch (NullPointerException e) {
-                JOptionPane.showMessageDialog(null, "Cancelled by User!");
-                System.out.println("ERROR Blank Input");
+                JOptionPane.showMessageDialog(null, "Input cancelled");
+                System.out.println("ERROR Blank Input " + e.getMessage());
                 break;
             } catch (Exception e) {
-                System.out.println("ERROR in askForInput");
+                System.out.println("ERROR in askForInput: " + e.getMessage());
                 JOptionPane.showMessageDialog(null, "Please input a valid list of number!");
             }
         }
 
-        // if user clicked cancel don't proceed to sorting
         if (pass) {
+            // if user clicked cancel don't proceed to sorting
             if (AlgorithmSort.inputArr.size() <= 0) {
                 JOptionPane.showMessageDialog(null, "Please input at least two integers!", "Error", JOptionPane.ERROR_MESSAGE);
                 return;
             }
 
+            // add to previous inputs
+            updatePreviousInputs();
+            // else start the sorting
             switch (sortType) {
                 case BUBBLE_SORT:
                     System.out.println("Array size = " + AlgorithmSort.inputArr.size());
