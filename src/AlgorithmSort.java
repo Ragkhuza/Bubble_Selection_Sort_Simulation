@@ -7,22 +7,15 @@ import java.util.ArrayList;
 import java.util.concurrent.TimeUnit;
 
 public abstract class AlgorithmSort {
-    static int currentPass, maxPass;
-
-    JLabel[] legendsJLabels;
+    final static int ANIMATE_UP = 0, ANIMATE_DOWN = 1, ANIMATE_LEFT = 2, ANIMATE_RIGHT = 3;
+    static int screenWidth = 1200, animateSpeed = 5, changeColorSpeed = 300, lastArr;
+    static int currentPass, maxPass, SCREEN_HEIGHT = 300;
     static Button[] boxes;
     static ArrayList<Integer> inputArr;
-    ArrayList<Integer> oldInputArr;
     static JFrame jframe;
-    final static int ANIMATE_UP = 0;
-    final static int ANIMATE_DOWN = 1;
-    final static int ANIMATE_LEFT = 2;
-    final static int ANIMATE_RIGHT = 3;
-    static int screenWidth = 1200;
-    final static int SCREEN_HEIGHT = 300;
-    static int animateSpeed = 5;
-    static int changeColorSpeed = 300;
-    static int lastArr;
+
+    JLabel[] legendsJLabels;
+    ArrayList<Integer> oldInputArr;
 
     public abstract Button createResetButton();
     public abstract Button createSortingButton();

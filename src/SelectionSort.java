@@ -6,10 +6,11 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
 public class SelectionSort extends AlgorithmSort {
-    static Thread animationThread;
     final static String BTN_LABEL = "Selection Sort";
-    Button btnStartSelectionSort, nextPassButton, resetButton;
     final static int BTN_RELATIVE_VAL = 30;
+    static Thread animationThread;
+
+    Button btnStartSelectionSort, nextPassButton, resetButton;
 
     public SelectionSort(final JFrame mainFrame) {
         super();
@@ -21,7 +22,7 @@ public class SelectionSort extends AlgorithmSort {
         jframe.setLayout(new BorderLayout());
         jframe.setContentPane(new JLabel(new ImageIcon(getClass().getResource(MainMenu.BACKGROUND_IMG))));
         jframe.setLayout(null);
-
+        jframe.setResizable(false);
         jframe.addWindowListener(new WindowAdapter(){
             public void windowClosing(WindowEvent e){
                 // @DOGGO maybe I can optimize these

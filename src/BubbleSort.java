@@ -6,10 +6,11 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
 public class BubbleSort extends AlgorithmSort {
+    final static int BTN_RELATIVE_VAL = 10;
+
     Button btnStartBubbleSort, nextPassButton, resetButton;
     Thread animationThread;
     String BTN_LABEL = "Bubble Sort";
-    final static int BTN_RELATIVE_VAL = 10;
 
     public BubbleSort(final JFrame mainFrame) {
         super();
@@ -23,7 +24,7 @@ public class BubbleSort extends AlgorithmSort {
         jframe.setLayout(new BorderLayout());
         jframe.setContentPane(new JLabel(new ImageIcon(getClass().getResource(MainMenu.BACKGROUND_IMG))));
         jframe.setLayout(null);
-
+        jframe.setResizable(false);
         jframe.addWindowListener(new WindowAdapter(){
             public void windowClosing(WindowEvent e){
                 // @DOGGO maybe I can optimize these

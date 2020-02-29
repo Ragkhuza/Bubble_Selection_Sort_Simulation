@@ -11,16 +11,14 @@ import java.io.InputStream;
 import java.util.ArrayList;
 
 public class MainMenu {
+    private final static int BUBBLE_SORT = 1, SELECTION_SORT = 2;
+    private final static int SCREEN_WIDTH = 320, SCREEN_HEIGHT = 400;
+    public final static String BACKGROUND_IMG = "bg.jpg";
     private static JComboBox<String> JComboOptions;
-    private final static int screenWidth = 320;
-    private final static int SCREEN_HEIGHT = 400;
     private static JFrame jframe;
     private static JButton[] jButtons;
-    private final static int BUBBLE_SORT = 1;
-    private final static int SELECTION_SORT = 2;
     private static FloatControl gainControl;
     private static JButton muteButton;
-    public final static String BACKGROUND_IMG = "bg.jpg";
     private static ArrayList<String> previousInputs = new ArrayList<>();
 
     public static void main(String[] args) {
@@ -78,13 +76,13 @@ public class MainMenu {
             }
 
             jButtons[i].setSize(BTN_WIDTH, BTN_HEIGHT);
-            jButtons[i].setLocation((screenWidth / 2) - (BTN_WIDTH / 2) , BTN_HEIGHT + (i * 75));
+            jButtons[i].setLocation((SCREEN_WIDTH / 2) - (BTN_WIDTH / 2) , BTN_HEIGHT + (i * 75));
 
             jframe.add(jButtons[i]);
         }
 
         jframe.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        jframe.setSize(screenWidth, SCREEN_HEIGHT);
+        jframe.setSize(SCREEN_WIDTH, SCREEN_HEIGHT);
         jframe.setLocationRelativeTo(null);
         jframe.setVisible(true);
     }
