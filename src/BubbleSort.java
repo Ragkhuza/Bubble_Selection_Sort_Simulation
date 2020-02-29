@@ -6,9 +6,9 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
 public class BubbleSort extends AlgorithmSort {
-    final static int BTN_RELATIVE_VAL = 10;
+    final static int BTN_RELATIVE_VAL = -20;
 
-    Button btnStartBubbleSort, nextPassButton, resetButton;
+    Button btnStartBubbleSort, nextPassButton, resetButton, undoButton;
     Thread animationThread;
     String BTN_LABEL = "Bubble Sort";
 
@@ -38,7 +38,9 @@ public class BubbleSort extends AlgorithmSort {
                 // @DOGGO this is my last resort
                 // if animation is still on going stop all the system
                 if(animationThread.isAlive()) {
-                    int confirm = JOptionPane.showConfirmDialog(null, "Closing this window while animating will terminate the whole program.", "Message", JOptionPane.OK_CANCEL_OPTION);
+                    int confirm = JOptionPane.showConfirmDialog(null,
+                            "Closing this window while animating will terminate the whole program.",
+                            "Message", JOptionPane.OK_CANCEL_OPTION);
 
                     if (confirm == 0)
                         System.exit(0);
@@ -57,6 +59,7 @@ public class BubbleSort extends AlgorithmSort {
         createBoxes();
 
         // ADD BUTTONS
+        jframe.add(createUndoButton());
         jframe.add(createResetButton());
         jframe.add(createSortingButton());
         jframe.add(createNextPassButton());
@@ -73,8 +76,9 @@ public class BubbleSort extends AlgorithmSort {
     private int doBubbleSort() {
         if (lastArr > 0) {
             printArray(inputArr, 0);
-            int temp = 0;
+
             for (; getCurrentPass() < getMaxPass(); setCurrentPass(getCurrentPass() + 1)) {
+                updateUndoStack(inputArr, getCurrentPass(), lastArr);
                 for (int j = 1; j < (inputArr.size() - getCurrentPass()); j++) {
                     updateLegends(getCurrentPass(), j - 1, lastArr - 1); // update all legends
 
@@ -86,7 +90,7 @@ public class BubbleSort extends AlgorithmSort {
                         changeColor(boxes[j - 1], Color.GREEN, false);
                         changeColor(boxes[j], Color.GREEN, true);
                         //swap elements
-                        temp = inputArr.get(j - 1);
+                        int temp = inputArr.get(j - 1);
                         inputArr.set(j - 1, inputArr.get(j));
                         inputArr.set(j, temp);
 
@@ -94,6 +98,7 @@ public class BubbleSort extends AlgorithmSort {
 
                         swap(j - 1, j, "bubble_sort");
                     }
+
                     changeColor(boxes[j - 1], Color.WHITE, true);
                     changeColor(boxes[j], Color.WHITE, true);
                 }
@@ -105,11 +110,37 @@ public class BubbleSort extends AlgorithmSort {
 
                 if(getCurrentPass() == getMaxPass())
                     return 0;
+
+                updateLegend(0, getCurrentPass()+"", false);
             }
 
         }
         enableButtons();
+
         return getCurrentPass();
+    }
+
+    public Button createUndoButton() {
+        undoButton = new Button("Prev Pass");
+        undoButton.setBounds( ((screenWidth/2) - 145) - BTN_RELATIVE_VAL, (SCREEN_HEIGHT - 30) - 80, 70, 50);
+        undoButton.setEnabled(false);
+        undoButton.addActionListener(e -> {
+            if (undoStack.size() <= 0) {
+                undoButton.setEnabled(false);
+                System.out.println("Cannot Undo Stack is full");
+                return;
+            }
+
+            undoPass();
+            updateLegend(0, getCurrentPass()+"", false);
+            updateLegend(1, "0", false);
+            updateLegend(2, "0", false);
+
+            if (undoStack.size() <= 0)
+                undoButton.setEnabled(false);
+        });
+
+        return undoButton;
     }
 
     public Button createResetButton() {
@@ -118,7 +149,11 @@ public class BubbleSort extends AlgorithmSort {
         resetButton.addActionListener(e -> {
             resetPassValues();
             resetBoxes();
+            resetUndoStack();
+            updateLegends(0,0,0);
+            undoButton.setEnabled(false);
         });
+
         return resetButton;
     }
 
@@ -143,13 +178,17 @@ public class BubbleSort extends AlgorithmSort {
         nextPassButton.addActionListener(e -> {
             new Thread(() -> {
                 nextPass();
+                // update it here although not a good thing
+                if (getCurrentPass() < inputArr.size())
+                    updateLegend(0, getCurrentPass()+"", false);
             }).start();
-
         });
+
         return nextPassButton;
     }
 
     private void nextPass() {
+        undoButton.setEnabled(true);
         disableButtons();
         System.out.println("next pass btn clicked");
         setMaxPass(getCurrentPass() + 1);
@@ -158,16 +197,17 @@ public class BubbleSort extends AlgorithmSort {
     }
 
     public void disableButtons() {
+        undoButton.setEnabled(false);
         resetButton.setEnabled(false);
         btnStartBubbleSort.setEnabled(false);
         nextPassButton.setEnabled(false);
     }
 
     public void enableButtons() {
+        undoButton.setEnabled(true);
         resetButton.setEnabled(true);
         btnStartBubbleSort.setEnabled(true);
         nextPassButton.setEnabled(true);
-
     }
 
 }

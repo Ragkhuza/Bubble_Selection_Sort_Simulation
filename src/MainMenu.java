@@ -6,6 +6,7 @@ import javax.sound.sampled.Clip;
 import javax.sound.sampled.FloatControl;
 import javax.swing.*;
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.io.BufferedInputStream;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -97,8 +98,12 @@ public class MainMenu {
         JComboOptions.setEditable(true);
         AutoCompleteDecorator.decorate(JComboOptions);
 
+        JLabel instructions = new JLabel("Shift + backspace for removing inputs ");
+        instructions.setForeground(Color.gray);
+
         final JComponent[] inputs = new JComponent[] {
                 new JLabel("Please input at least 2 numbers: (separated by ONE space)"),
+                instructions,
                 JComboOptions,
         };
 
@@ -117,7 +122,7 @@ public class MainMenu {
     }
 
     // get input from user & verify if correct
-    protected static ArrayList<Integer> getInput() throws NullPointerException{
+    protected static ArrayList<Integer> getInput() throws Exception{
         ArrayList<Integer> arr = new ArrayList<Integer>();
         String input = "";
 
@@ -130,7 +135,7 @@ public class MainMenu {
         try {
             input = JComboOptions.getSelectedItem().toString();
         } catch (Exception e) {
-            throw new NullPointerException("Err in getInput #2");
+            throw new Exception("Err in getInput #2");
         }
 
 //        input = JOptionPane.showInputDialog("Please input at least 2 numbers: (separated by ONE space)");

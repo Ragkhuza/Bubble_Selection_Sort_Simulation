@@ -4,6 +4,7 @@ import javax.swing.JOptionPane;
 import java.awt.Button;
 import java.awt.Color;
 import java.util.ArrayList;
+import java.util.Stack;
 import java.util.concurrent.TimeUnit;
 
 public abstract class AlgorithmSort {
@@ -16,6 +17,7 @@ public abstract class AlgorithmSort {
 
     JLabel[] legendsJLabels;
     ArrayList<Integer> oldInputArr;
+    Stack<UndoObject> undoStack = new Stack<UndoObject>();
 
     public abstract Button createResetButton();
     public abstract Button createSortingButton();
@@ -26,6 +28,32 @@ public abstract class AlgorithmSort {
     public AlgorithmSort() {
         oldInputArr = (ArrayList<Integer>) AlgorithmSort.inputArr.clone();
         resetPassValues();
+    }
+
+    public void updateUndoStack(ArrayList<Integer> undoInputArr, int undoCurrentPass, int lastArr) {
+        System.out.println("Pushing to undoStack: " + undoInputArr);
+        UndoObject undoObject = new UndoObject((ArrayList<Integer>) undoInputArr.clone(), undoCurrentPass, lastArr);
+        undoStack.push(undoObject);
+    }
+
+    public void undoPass() {
+        System.out.println("Undoing");
+        inputArr = undoStack.lastElement().inputList;
+        setCurrentPass(undoStack.lastElement().currentPass);
+        resetBoxes(inputArr);
+        undoBoxesColor(undoStack.lastElement().lastArr);
+        lastArr = undoStack.lastElement().lastArr;
+        System.out.println(undoStack.pop().inputList);
+    }
+
+    private void undoBoxesColor(int lastArr) {
+        for (int i = lastArr; i < inputArr.size(); i++) {
+            changeColor(boxes[i], Color.CYAN, true);
+        }
+    }
+
+    public void resetUndoStack() {
+        undoStack = new Stack<UndoObject>();
     }
 
     public void resetPassValues() {
@@ -137,6 +165,17 @@ public abstract class AlgorithmSort {
             jframe.remove(boxes[i]);
             boxes[i] = null;
         }
+    }
+
+    public void resetBoxes(ArrayList<Integer> inputList) {
+        System.out.println("arr" + inputArr);
+        System.out.println("old arr" + oldInputArr);
+
+        inputArr = (ArrayList<Integer>) inputList.clone();
+        System.out.println("new arr" + inputArr);
+
+        removeBoxes();
+        createBoxes();
     }
 
     public void resetBoxes() {

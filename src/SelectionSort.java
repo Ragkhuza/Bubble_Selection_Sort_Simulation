@@ -117,6 +117,7 @@ public class SelectionSort extends AlgorithmSort {
 
         }
         enableButtons();
+
         return getCurrentPass();
     }
 
@@ -127,6 +128,7 @@ public class SelectionSort extends AlgorithmSort {
             resetPassValues();
             resetBoxes();
         });
+
         return resetButton;
     }
 
@@ -154,8 +156,8 @@ public class SelectionSort extends AlgorithmSort {
             new Thread(() -> {
                 nextPass();
             }).start();
-
         });
+
         return nextPassButton;
     }
 
